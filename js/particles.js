@@ -1,19 +1,10 @@
 /**
- * Beyond Dala — electrical constellation engine
- * Bloom glow · depth layers · morph arcs · current pulse · magnetic mouse
- *
- * Scroll morphs:
- *   0 Hero     → motor stator (copper windings)
- *   1 Services → generator body
- *   2 Telecom  → lightning bolt
- *   3 About    → transformer
- *   4 CTA      → spark burst
+ * Electrical constellation — Three.js WebGL
+ * Scroll morphs: stator → generator → lightning → transformer → spark
+ * Bloom when available; always falls back to direct render.
  */
 
-import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
-import { EffectComposer } from 'https://unpkg.com/three@0.160.0/examples/jsm/postprocessing/EffectComposer.js';
-import { RenderPass } from 'https://unpkg.com/three@0.160.0/examples/jsm/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from 'https://unpkg.com/three@0.160.0/examples/jsm/postprocessing/UnrealBloomPass.js';
+import * as THREE from 'three';
 
 const COLORS = [
   new THREE.Color('#8052ff'),
@@ -30,9 +21,9 @@ const COLORS = [
 ];
 
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const COUNT = window.innerWidth < 768 ? 2800 : 6200;
-const AMBIENT = window.innerWidth < 768 ? 200 : 480;
-const LARGE = window.innerWidth < 768 ? 18 : 36;
+const COUNT = window.innerWidth < 768 ? 2800 : 5800;
+const AMBIENT = window.innerWidth < 768 ? 180 : 400;
+const LARGE = window.innerWidth < 768 ? 14 : 28;
 
 /* Noise */
 const perm = new Uint8Array(512);
@@ -70,46 +61,35 @@ function easeInOut(t) {
   return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 }
 
-/* —— Sharper electrical shapes —— */
+/* Shapes */
 function sampleStator(i, n) {
   const rings = 12;
   const ring = i % rings;
   const along = Math.floor(i / rings) / Math.max(1, Math.ceil(n / rings));
   const angle = along * Math.PI * 2;
   const teeth = 48;
-
   if (ring < 9) {
     const rBase = 1.2 + ring * 0.2;
     const toothPhase = (angle * teeth) % (Math.PI * 2);
     const inTooth = Math.cos(toothPhase) > 0.15;
     const slotDepth = inTooth ? 0 : 0.42;
     const rr = rBase - slotDepth;
-    // Copper fill denser in slots
     const copperLayer = !inTooth && ring >= 3 && ring <= 7;
-    const z = copperLayer
-      ? ((i % 5) - 2) * 0.18
-      : (ring / rings - 0.5) * 1.2 + Math.sin(angle * 3) * 0.06;
+    const z = copperLayer ? ((i % 5) - 2) * 0.18 : (ring / rings - 0.5) * 1.2;
     return new THREE.Vector3(Math.cos(angle) * rr, Math.sin(angle) * rr, z).multiplyScalar(1.85);
   }
-  // Rotor bars
   const r = 0.25 + (ring - 9) * 0.16;
-  return new THREE.Vector3(
-    Math.cos(angle) * r,
-    Math.sin(angle) * r,
-    Math.sin(angle * 8) * 0.2
-  ).multiplyScalar(1.85);
+  return new THREE.Vector3(Math.cos(angle) * r, Math.sin(angle) * r, Math.sin(angle * 8) * 0.2).multiplyScalar(1.85);
 }
 
 function sampleMotorBody(i, n) {
   const u = i / n;
   const t = (i * 0.6180339887) % 1;
   const a = t * Math.PI * 2;
-
   if (u < 0.5) {
     const h = (u / 0.5 - 0.5) * 4.0;
     const fin = Math.sin(a * 16) > 0.4 ? 0.18 : 0;
-    const r = 1.5 + fin;
-    return new THREE.Vector3(Math.cos(a) * r, h, Math.sin(a) * r).multiplyScalar(1.4);
+    return new THREE.Vector3(Math.cos(a) * (1.5 + fin), h, Math.sin(a) * (1.5 + fin)).multiplyScalar(1.4);
   }
   if (u < 0.68) {
     const h = (u - 0.5) / 0.18;
@@ -121,13 +101,9 @@ function sampleMotorBody(i, n) {
     const r = 1.5 * (1 - h * 0.45);
     return new THREE.Vector3(Math.cos(a) * r, -2.05 - h * 0.5, Math.sin(a) * r).multiplyScalar(1.4);
   }
-  // Terminal box
   if (u < 0.9) {
-    const bx = ((i % 20) / 20 - 0.5) * 1.2;
-    const by = ((Math.floor(i / 20) % 8) / 8) * 0.7 + 0.3;
-    return new THREE.Vector3(bx, by, 1.55).multiplyScalar(1.4);
+    return new THREE.Vector3(((i % 20) / 20 - 0.5) * 1.2, ((Math.floor(i / 20) % 8) / 8) * 0.7 + 0.3, 1.55).multiplyScalar(1.4);
   }
-  // Shaft
   const h = (u - 0.9) / 0.1;
   return new THREE.Vector3(Math.cos(a) * 0.2, 2.6 + h * 1.6, Math.sin(a) * 0.2).multiplyScalar(1.4);
 }
@@ -140,14 +116,9 @@ function sampleLightning(i, n) {
   const f = segF - si;
   let x = lerp(segs[si][0], segs[si + 1][0], f);
   let y = lerp(segs[si][1], segs[si + 1][1], f);
-
   const branch = i % 5 === 0;
   const side = i % 2 ? 1 : -1;
-  if (branch) {
-    const bf = (i % 10) / 10;
-    x += side * (0.3 + bf * 1.1);
-    y += (Math.random() - 0.5) * 0.3;
-  }
+  if (branch) x += side * (0.3 + ((i % 10) / 10) * 1.1);
   const thick = Math.max(0, 0.4 - Math.abs(u - 0.45) * 0.5);
   x += side * ((i * 17) % 7) * 0.03 * thick;
   const z = Math.sin(u * 22 + i) * (0.25 + (branch ? 0.4 : 0));
@@ -158,36 +129,25 @@ function sampleTransformer(i, n) {
   const u = i / n;
   const t = (i * 0.6180339887) % 1;
   const a = t * Math.PI * 2;
-
   if (u < 0.36) {
     const h = (t - 0.5) * 3.4;
     const layer = Math.floor((u / 0.36) * 8);
     const r = 0.55 + layer * 0.12;
-    // Helical winding
     const helix = h * 2.5;
-    return new THREE.Vector3(
-      -1.4 + Math.cos(a + helix) * r * 0.4,
-      h,
-      Math.sin(a + helix) * r
-    ).multiplyScalar(1.45);
+    return new THREE.Vector3(-1.4 + Math.cos(a + helix) * r * 0.4, h, Math.sin(a + helix) * r).multiplyScalar(1.45);
   }
   if (u < 0.72) {
     const h = (t - 0.5) * 3.4;
     const layer = Math.floor(((u - 0.36) / 0.36) * 8);
     const r = 0.55 + layer * 0.12;
     const helix = h * 2.5;
-    return new THREE.Vector3(
-      1.4 + Math.cos(a + helix) * r * 0.4,
-      h,
-      Math.sin(a + helix) * r
-    ).multiplyScalar(1.45);
+    return new THREE.Vector3(1.4 + Math.cos(a + helix) * r * 0.4, h, Math.sin(a + helix) * r).multiplyScalar(1.45);
   }
-  // Core frame
   const h = (t - 0.5) * 3.6;
   const part = i % 5;
   if (part < 2) return new THREE.Vector3((t - 0.5) * 0.55, h, (part - 0.5) * 0.2).multiplyScalar(1.45);
   if (part < 4) return new THREE.Vector3((t - 0.5) * 3.0, part === 2 ? 1.8 : -1.8, 0).multiplyScalar(1.45);
-  return new THREE.Vector3((t - 0.5) * 3.4, h * 0.3, 0.35).multiplyScalar(1.45);
+  return new THREE.Vector3((t - 0.5) * 0.4, h * 0.3, 0.35).multiplyScalar(1.45);
 }
 
 function sampleSparkBurst(i, n) {
@@ -217,9 +177,24 @@ function triGeo(size = 0.026) {
   return g;
 }
 
-function init() {
+async function init() {
   const canvas = document.getElementById('canvas');
-  if (!canvas) return;
+  if (!canvas) {
+    console.error('[constellation] #canvas not found');
+    return;
+  }
+
+  // Optional bloom — never block particles if it fails
+  let EffectComposer, RenderPass, UnrealBloomPass;
+  let bloomOk = false;
+  try {
+    ({ EffectComposer } = await import('three/addons/postprocessing/EffectComposer.js'));
+    ({ RenderPass } = await import('three/addons/postprocessing/RenderPass.js'));
+    ({ UnrealBloomPass } = await import('three/addons/postprocessing/UnrealBloomPass.js'));
+    bloomOk = true;
+  } catch (err) {
+    console.warn('[constellation] bloom unavailable, using direct render', err);
+  }
 
   const renderer = new THREE.WebGLRenderer({
     canvas, alpha: true, antialias: true, powerPreference: 'high-performance',
@@ -227,18 +202,25 @@ function init() {
   renderer.setClearColor(0x000000, 0);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.15;
+  renderer.toneMappingExposure = 1.2;
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
   camera.position.set(0, 0, 11.5);
 
-  // Bloom — beyond Dala glow
-  const composer = new EffectComposer(renderer);
-  const renderPass = new RenderPass(scene, camera);
-  composer.addPass(renderPass);
-  const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.55, 0.4, 0.85);
-  if (!reducedMotion) composer.addPass(bloom);
+  let composer = null;
+  let bloom = null;
+  if (bloomOk && !reducedMotion) {
+    try {
+      composer = new EffectComposer(renderer);
+      composer.addPass(new RenderPass(scene, camera));
+      bloom = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.55, 0.4, 0.82);
+      composer.addPass(bloom);
+    } catch (err) {
+      console.warn('[constellation] composer failed', err);
+      composer = null;
+    }
+  }
 
   const root = new THREE.Group();
   scene.add(root);
@@ -249,27 +231,36 @@ function init() {
   const largeG = new THREE.Group();
   root.add(largeG);
 
-  const geo = triGeo(0.024);
-  const largeGeo = triGeo(0.14);
+  const geo = triGeo(0.028);
+  const largeGeo = triGeo(0.16);
   const matC = new THREE.MeshBasicMaterial({
-    color: 0xffffff, wireframe: true, transparent: true, opacity: 0.95,
+    color: 0xffffff, wireframe: true, transparent: true, opacity: 1,
     depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
   });
   const matA = new THREE.MeshBasicMaterial({
-    color: 0xffffff, wireframe: true, transparent: true, opacity: 0.18,
+    color: 0xffffff, wireframe: true, transparent: true, opacity: 0.28,
     depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
   });
   const matL = new THREE.MeshBasicMaterial({
-    color: 0xffffff, wireframe: true, transparent: true, opacity: 0.12,
+    color: 0xffffff, wireframe: true, transparent: true, opacity: 0.16,
     depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
   });
 
   const mesh = new THREE.InstancedMesh(geo, matC, COUNT);
+  mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
   const ambMesh = new THREE.InstancedMesh(geo, matA, AMBIENT);
   const largeMesh = new THREE.InstancedMesh(largeGeo, matL, LARGE);
   cluster.add(mesh);
   ambientG.add(ambMesh);
   largeG.add(largeMesh);
+
+  // Ensure instanceColor buffer exists
+  const colorArr = new Float32Array(COUNT * 3);
+  for (let i = 0; i < COUNT; i++) {
+    const c = COLORS[i % COLORS.length];
+    colorArr[i * 3] = c.r; colorArr[i * 3 + 1] = c.g; colorArr[i * 3 + 2] = c.b;
+  }
+  mesh.instanceColor = new THREE.InstancedBufferAttribute(colorArr, 3);
 
   const shapePos = SHAPES.map((fn) => {
     const arr = new Float32Array(COUNT * 3);
@@ -283,50 +274,43 @@ function init() {
   const dummy = new THREE.Object3D();
   const data = [];
   for (let i = 0; i < COUNT; i++) {
-    const color = COLORS[i % COLORS.length];
-    mesh.setColorAt(i, color);
-    const sc = 0.45 + Math.random() * 1.2;
-    const depth = Math.random(); // 0 near, 1 far — DOF feel
+    const sc = 0.55 + Math.random() * 1.15;
+    const depth = Math.random();
     data.push({
       phase: Math.random() * 100,
       speed: 0.05 + Math.random() * 0.14,
       rotSpeed: (Math.random() - 0.5) * 0.6,
       scale: sc,
       depth,
-      color,
+      color: COLORS[i % COLORS.length].clone(),
       x: shapePos[0][i * 3],
       y: shapePos[0][i * 3 + 1],
       z: shapePos[0][i * 3 + 2],
       vx: 0, vy: 0, vz: 0,
     });
     dummy.position.set(data[i].x, data[i].y, data[i].z);
-    dummy.scale.setScalar(sc * (0.6 + depth * 0.8));
+    dummy.scale.setScalar(sc);
     dummy.updateMatrix();
     mesh.setMatrixAt(i, dummy.matrix);
   }
   mesh.instanceMatrix.needsUpdate = true;
-  if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
 
   const ambData = [];
   for (let i = 0; i < AMBIENT; i++) {
     const x = (Math.random() - 0.35) * 20;
     const y = (Math.random() - 0.5) * 14;
     const z = (Math.random() - 0.5) * 10 - 2;
-    ambMesh.setColorAt(i, COLORS[Math.floor(Math.random() * COLORS.length)]);
-    const sc = 0.28 + Math.random() * 0.5;
-    ambData.push({
-      base: new THREE.Vector3(x, y, z),
-      phase: Math.random() * 100,
-      speed: 0.025 + Math.random() * 0.06,
-      rotSpeed: (Math.random() - 0.5) * 0.2,
-      scale: sc,
-    });
+    const c = COLORS[Math.floor(Math.random() * COLORS.length)];
+    ambMesh.setColorAt(i, c);
+    const sc = 0.35 + Math.random() * 0.55;
+    ambData.push({ base: new THREE.Vector3(x, y, z), phase: Math.random() * 100, speed: 0.025 + Math.random() * 0.06, rotSpeed: (Math.random() - 0.5) * 0.2, scale: sc });
     dummy.position.set(x, y, z);
     dummy.scale.setScalar(sc);
     dummy.updateMatrix();
     ambMesh.setMatrixAt(i, dummy.matrix);
   }
   ambMesh.instanceMatrix.needsUpdate = true;
+  if (ambMesh.instanceColor) ambMesh.instanceColor.needsUpdate = true;
 
   const largeData = [];
   for (let i = 0; i < LARGE; i++) {
@@ -334,13 +318,8 @@ function init() {
     const y = (Math.random() - 0.5) * 10;
     const z = -3 - Math.random() * 5;
     largeMesh.setColorAt(i, COLORS[Math.floor(Math.random() * COLORS.length)]);
-    const sc = 0.8 + Math.random() * 1.8;
-    largeData.push({
-      base: new THREE.Vector3(x, y, z),
-      phase: Math.random() * 100,
-      speed: 0.015 + Math.random() * 0.03,
-      scale: sc,
-    });
+    const sc = 0.9 + Math.random() * 1.8;
+    largeData.push({ base: new THREE.Vector3(x, y, z), phase: Math.random() * 100, speed: 0.015 + Math.random() * 0.03, scale: sc });
     dummy.position.set(x, y, z);
     dummy.scale.setScalar(sc);
     dummy.updateMatrix();
@@ -349,12 +328,13 @@ function init() {
   largeMesh.instanceMatrix.needsUpdate = true;
   if (largeMesh.instanceColor) largeMesh.instanceColor.needsUpdate = true;
 
-  // Morph state
   let morphFrom = 0, morphTo = 0, morphT = 1, targetMorphT = 1;
   let clusterTX = CLUSTER_X[0], clusterTY = CLUSTER_Y[0], clusterTS = CLUSTER_SCALE[0];
-  let energize = 0; // flash on shape change
-  let lastShape = 0;
-  let scrollVel = 0, lastScrollY = window.scrollY;
+  let energize = 0, lastShape = 0, scrollVel = 0, lastScrollY = window.scrollY;
+
+  // Start cluster visible on the right
+  cluster.position.set(CLUSTER_X[0], CLUSTER_Y[0], 0);
+  cluster.scale.setScalar(CLUSTER_SCALE[0]);
 
   const sections = () => [
     document.getElementById('top'),
@@ -371,10 +351,7 @@ function init() {
     scrollVel = scrollY - lastScrollY;
     lastScrollY = scrollY;
     const vh = window.innerHeight;
-    const centers = secs.map((el) => {
-      const r = el.getBoundingClientRect();
-      return scrollY + r.top + r.height * 0.35;
-    });
+    const centers = secs.map((el) => scrollY + el.getBoundingClientRect().top + el.getBoundingClientRect().height * 0.35);
 
     let i = 0;
     while (i < centers.length - 1 && scrollY + vh * 0.4 > centers[i + 1]) i++;
@@ -383,8 +360,7 @@ function init() {
     let t = 0;
     if (i1 !== i2) {
       const span = centers[i2] - centers[i1];
-      t = span > 0 ? (scrollY + vh * 0.4 - centers[i1]) / span : 0;
-      t = Math.max(0, Math.min(1, t));
+      t = span > 0 ? Math.max(0, Math.min(1, (scrollY + vh * 0.4 - centers[i1]) / span)) : 0;
     }
     morphFrom = i1;
     morphTo = i2;
@@ -393,7 +369,6 @@ function init() {
     if (Math.round(i1 + t) !== lastShape && t > 0.15 && t < 0.85) {
       energize = 1;
       lastShape = Math.round(i1 + t);
-      document.body.dataset.shape = String(lastShape);
       window.dispatchEvent(new CustomEvent('constellation-shape', { detail: { shape: lastShape } }));
     }
 
@@ -401,7 +376,7 @@ function init() {
     clusterTX = mobile ? lerp(CLUSTER_X[morphFrom], CLUSTER_X[morphTo], targetMorphT) * 0.22
       : lerp(CLUSTER_X[morphFrom], CLUSTER_X[morphTo], targetMorphT);
     clusterTY = lerp(CLUSTER_Y[morphFrom], CLUSTER_Y[morphTo], targetMorphT);
-    clusterTS = mobile ? lerp(CLUSTER_SCALE[morphFrom], CLUSTER_SCALE[morphTo], targetMorphT) * 0.68
+    clusterTS = mobile ? lerp(CLUSTER_SCALE[morphFrom], CLUSTER_SCALE[morphTo], targetMorphT) * 0.7
       : lerp(CLUSTER_SCALE[morphFrom], CLUSTER_SCALE[morphTo], targetMorphT);
   }
 
@@ -414,15 +389,15 @@ function init() {
     mouseTarget.x = (e.clientX / window.innerWidth) * 2 - 1;
     mouseTarget.y = -(e.clientY / window.innerHeight) * 2 + 1;
   }, { passive: true });
-
-  // Click to energize
   window.addEventListener('pointerdown', () => { energize = Math.max(energize, 0.85); });
 
   function resize() {
     const w = window.innerWidth, h = window.innerHeight;
     renderer.setSize(w, h, false);
-    composer.setSize(w, h);
-    bloom.resolution.set(w, h);
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    if (composer) composer.setSize(w, h);
+    if (bloom) bloom.resolution.set(w, h);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
     updateScrollMorph();
@@ -430,8 +405,8 @@ function init() {
   resize();
   window.addEventListener('resize', resize);
 
-  // Signal ready
   window.dispatchEvent(new Event('constellation-ready'));
+  console.info('[constellation] ready', { count: COUNT, bloom: !!composer });
 
   const clock = new THREE.Clock();
   let running = true, frameId;
@@ -447,28 +422,24 @@ function init() {
 
     cluster.position.x += (clusterTX - cluster.position.x) * (reducedMotion ? 1 : 0.07);
     cluster.position.y += (clusterTY - cluster.position.y) * (reducedMotion ? 1 : 0.07);
-    const s = cluster.scale.x + (clusterTS - cluster.scale.x) * (reducedMotion ? 1 : 0.07);
-    cluster.scale.setScalar(s);
+    const sc = cluster.scale.x + (clusterTS - cluster.scale.x) * (reducedMotion ? 1 : 0.07);
+    cluster.scale.setScalar(sc);
 
     mouse.lerp(mouseTarget, reducedMotion ? 1 : 0.06);
 
     if (!reducedMotion) {
-      // Scroll-velocity camera kick
       const kick = Math.max(-0.35, Math.min(0.35, scrollVel * 0.002));
       camera.position.x += (mouse.x * 0.9 - camera.position.x) * 0.035;
       camera.position.y += (mouse.y * 0.45 + kick - camera.position.y) * 0.035;
-      camera.position.z = 11.5 + Math.sin(t * 0.15) * 0.15;
       camera.lookAt(cluster.position.x * 0.4, cluster.position.y * 0.3, 0);
       cluster.rotation.y = t * 0.045;
       cluster.rotation.x = Math.sin(t * 0.12) * 0.04;
-      // Bloom breathes with energize
-      bloom.strength = 0.45 + energize * 0.7 + Math.sin(t * 0.8) * 0.05;
+      if (bloom) bloom.strength = 0.45 + energize * 0.7 + Math.sin(t * 0.8) * 0.05;
     }
 
     const from = shapePos[morphFrom];
     const to = shapePos[morphTo];
     const blend = morphT;
-    // Morph turbulence — particles fly out mid-transition
     const morphEnergy = Math.sin(blend * Math.PI) * (1 + Math.abs(scrollVel) * 0.01);
 
     for (let i = 0; i < COUNT; i++) {
@@ -479,19 +450,16 @@ function init() {
       let tz = lerp(from[i3 + 2], to[i3 + 2], blend);
 
       if (!reducedMotion) {
-        // Outward burst during morph
         const nx = tx || 0.001, ny = ty || 0.001, nz = tz || 0.001;
         const len = Math.sqrt(nx * nx + ny * ny + nz * nz) || 1;
         tx += (nx / len) * morphEnergy * 0.55;
         ty += (ny / len) * morphEnergy * 0.55;
         tz += (nz / len) * morphEnergy * 0.35;
 
-        const n1 = noise3D(tx * 0.4 + t * d.speed * 0.3, ty * 0.4, d.phase) * 0.18;
-        const n2 = noise3D(tx * 0.4, ty * 0.4 + t * d.speed * 0.25, d.phase + 40) * 0.18;
-        const n3 = noise3D(d.phase, tz * 0.4, t * d.speed * 0.2) * 0.12;
-        tx += n1; ty += n2; tz += n3;
+        tx += noise3D(tx * 0.4 + t * d.speed * 0.3, ty * 0.4, d.phase) * 0.18;
+        ty += noise3D(tx * 0.4, ty * 0.4 + t * d.speed * 0.25, d.phase + 40) * 0.18;
+        tz += noise3D(d.phase, tz * 0.4, t * d.speed * 0.2) * 0.12;
 
-        // Magnetic mouse — attract near, repel when close
         const px = tx + cluster.position.x;
         const py = ty + cluster.position.y;
         const dx = mouse.x * 4.5 - px;
@@ -503,7 +471,6 @@ function init() {
           ty += dy * force;
         }
 
-        // Current pulse along stator rings
         if (morphFrom === 0 || morphTo === 0) {
           const ang = Math.atan2(ty, tx);
           const pulse = Math.sin(ang * 8 - t * 4) * 0.5 + 0.5;
@@ -513,60 +480,43 @@ function init() {
         }
       }
 
-      // Spring physics
       const k = reducedMotion ? 1 : 0.14;
       d.vx = (d.vx + (tx - d.x) * k) * 0.78;
       d.vy = (d.vy + (ty - d.y) * k) * 0.78;
       d.vz = (d.vz + (tz - d.z) * k) * 0.78;
-      d.x += d.vx;
-      d.y += d.vy;
-      d.z += d.vz;
+      d.x += d.vx; d.y += d.vy; d.z += d.vz;
 
       const twinkle = reducedMotion ? 1
-        : 0.65 + noise3D(t * 0.5 + d.phase, i * 0.01, 0) * 0.25 + energize * 0.35;
-      const depthScale = 0.55 + d.depth * 0.9;
+        : 0.7 + noise3D(t * 0.5 + d.phase, i * 0.01, 0) * 0.25 + energize * 0.35;
       dummy.position.set(d.x, d.y, d.z - d.depth * 1.2);
-      dummy.rotation.set(
-        t * d.rotSpeed * 0.35,
-        t * d.rotSpeed * 0.22 + d.phase,
-        t * d.rotSpeed * 0.18
-      );
-      dummy.scale.setScalar(d.scale * twinkle * depthScale);
+      dummy.rotation.set(t * d.rotSpeed * 0.35, t * d.rotSpeed * 0.22 + d.phase, t * d.rotSpeed * 0.18);
+      dummy.scale.setScalar(d.scale * twinkle * (0.55 + d.depth * 0.9));
       dummy.updateMatrix();
       mesh.setMatrixAt(i, dummy.matrix);
 
       const c = d.color.clone();
-      // Electrical accent washes
       if (morphTo === 0 || morphFrom === 0) {
         const b = morphFrom === 0 ? 1 - blend : blend;
-        const r = Math.sqrt(d.x * d.x + d.y * d.y);
-        if (r > 1.6) c.lerp(new THREE.Color('#ffb829'), b * 0.6);
+        if (Math.sqrt(d.x * d.x + d.y * d.y) > 1.6) c.lerp(new THREE.Color('#ffb829'), b * 0.6);
       }
       if (morphTo === 2 || morphFrom === 2) {
         const b = morphFrom === 2 ? 1 - blend : blend;
         c.lerp(new THREE.Color('#fff4cc'), b * 0.5 * twinkle);
       }
-      if (morphTo === 4 || morphFrom === 4) {
-        const b = morphFrom === 4 ? 1 - blend : blend;
-        c.lerp(new THREE.Color('#ffffff'), b * 0.4 * energize);
-      }
-      c.multiplyScalar(0.55 + twinkle * 0.5 + energize * 0.3);
+      c.multiplyScalar(0.6 + twinkle * 0.55 + energize * 0.35);
       mesh.setColorAt(i, c);
     }
     mesh.instanceMatrix.needsUpdate = true;
-    if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
+    mesh.instanceColor.needsUpdate = true;
 
     for (let i = 0; i < AMBIENT; i++) {
       const d = ambData[i];
-      let ax = d.base.x, ay = d.base.y, az = d.base.z;
+      let ax = d.base.x, ay = d.base.y;
       if (!reducedMotion) {
-        ax += noise3D(d.base.x * 0.1 + t * d.speed, d.base.y * 0.1, d.phase) * 0.7;
-        ay += noise3D(d.base.x * 0.1, d.base.y * 0.1 + t * d.speed, d.phase) * 0.7;
-        // Parallax with mouse
-        ax += mouse.x * 0.3 * (1 + d.base.z * 0.05);
-        ay += mouse.y * 0.2 * (1 + d.base.z * 0.05);
+        ax += noise3D(d.base.x * 0.1 + t * d.speed, d.base.y * 0.1, d.phase) * 0.7 + mouse.x * 0.3;
+        ay += noise3D(d.base.x * 0.1, d.base.y * 0.1 + t * d.speed, d.phase) * 0.7 + mouse.y * 0.2;
       }
-      dummy.position.set(ax, ay, az);
+      dummy.position.set(ax, ay, d.base.z);
       dummy.rotation.set(t * d.rotSpeed * 0.1, d.phase, 0);
       dummy.scale.setScalar(d.scale);
       dummy.updateMatrix();
@@ -576,11 +526,11 @@ function init() {
 
     for (let i = 0; i < LARGE; i++) {
       const d = largeData[i];
-      let ax = d.base.x + (reducedMotion ? 0 : noise3D(d.phase, t * d.speed, 0) * 0.4);
-      let ay = d.base.y + (reducedMotion ? 0 : noise3D(0, d.phase, t * d.speed) * 0.4);
-      ax += mouse.x * 0.8;
-      ay += mouse.y * 0.5;
-      dummy.position.set(ax, ay, d.base.z);
+      dummy.position.set(
+        d.base.x + (reducedMotion ? 0 : noise3D(d.phase, t * d.speed, 0) * 0.4) + mouse.x * 0.8,
+        d.base.y + (reducedMotion ? 0 : noise3D(0, d.phase, t * d.speed) * 0.4) + mouse.y * 0.5,
+        d.base.z
+      );
       dummy.rotation.set(t * 0.05 + d.phase, t * 0.03, 0);
       dummy.scale.setScalar(d.scale * (0.9 + energize * 0.3));
       dummy.updateMatrix();
@@ -588,8 +538,8 @@ function init() {
     }
     largeMesh.instanceMatrix.needsUpdate = true;
 
-    if (reducedMotion) renderer.render(scene, camera);
-    else composer.render();
+    if (composer) composer.render();
+    else renderer.render(scene, camera);
   }
 
   animate();
@@ -606,4 +556,7 @@ function init() {
   });
 }
 
-init();
+init().catch((err) => {
+  console.error('[constellation] init failed', err);
+  window.dispatchEvent(new Event('constellation-ready'));
+});
