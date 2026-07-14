@@ -12,6 +12,8 @@
 </head>
 <body>
 
+  <canvas id="ambient-canvas" aria-hidden="true"></canvas>
+
   <header class="nav">
     <div class="container">
       <div class="nav-inner">
@@ -23,8 +25,8 @@
                 <stop offset="100%" stop-color="#15846e"/>
               </linearGradient>
             </defs>
-            <path d="M14 2L26 8v12L14 26 2 20V8L14 2z" stroke="url(#logo-grad)" stroke-width="1.5" fill="none"/>
-            <path d="M14 8v12M8 11l12 6M20 11l-12 6" stroke="#8052ff" stroke-width="1" opacity="0.8"/>
+            <path d="M14 3L24 9v10L14 25 4 19V9L14 3z" stroke="url(#logo-grad)" stroke-width="1.5" fill="none"/>
+            <path d="M14 9l5 3-5 3-5-3 5-3z" stroke="#8052ff" stroke-width="1" fill="none"/>
           </svg>
           <span class="logo-wordmark">Lal's Motor Winders</span>
         </a>
@@ -38,13 +40,14 @@
           </ul>
         </nav>
 
-        <a href="#contact" class="nav-cta">Request Quote</a>
-
-        <button class="menu-toggle" id="menu-toggle" aria-label="Open menu" aria-expanded="false">
-          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path stroke-linecap="round" stroke-width="2" d="M4 7h16M4 12h16M4 17h16"/>
-          </svg>
-        </button>
+        <div class="nav-right">
+          <a href="#contact" class="nav-cta">Request Quote</a>
+          <button class="menu-toggle" id="menu-toggle" aria-label="Open menu" aria-expanded="false">
+            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-width="2" d="M4 7h16M4 12h16M4 17h16"/>
+            </svg>
+          </button>
+        </div>
       </div>
 
       <div class="mobile-menu" id="mobile-menu">
@@ -58,102 +61,97 @@
   </header>
 
   <main>
-    <!-- Hero -->
+    <!-- Hero: two-column, display 78–113px, particle constellation right -->
     <section class="hero" id="hero">
       <div class="container">
         <div class="hero-grid">
           <div class="hero-content">
-            <p class="label">Fiji · Since 1998</p>
+            <p class="label">Fiji · Electrical Excellence</p>
             <h1 class="display">Power precision.<br>Rewind reliability.</h1>
-            <p class="body-text" style="margin-top:24px; max-width:480px">
-              Lal's Motor Winders (Fiji) PTE Limited — specialists in motor and generator rewinding, electrical supplies, and telecommunications services for industry across the Pacific.
+            <p class="body-text" style="margin-top:var(--spacing-24)">
+              Lal's Motor Winders (Fiji) PTE Limited — motor and generator rewinding, electrical supplies, and telecommunications for industry across the Pacific.
             </p>
             <div class="hero-actions">
-              <a href="#contact" class="btn-primary">
-                Request a Quote
-                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                </svg>
-              </a>
-              <a href="#services" class="btn-ghost">Explore services →</a>
+              <a href="#contact" class="btn-primary">Request a Quote</a>
+              <a href="#services" class="btn-ghost">Explore services</a>
             </div>
           </div>
           <div class="hero-visual" aria-hidden="true">
-            <canvas id="winding-canvas"></canvas>
+            <canvas id="hero-canvas"></canvas>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Stats -->
-    <section class="section" style="padding-top:0">
+    <!-- Metrics — typographic, no containers -->
+    <section class="section" style="padding-top:0; padding-bottom:var(--spacing-120)">
       <div class="container">
-        <div class="stats-row">
+        <div class="metrics">
           <div>
-            <div class="stat-value">25+</div>
-            <div class="stat-label">Years serving Fiji</div>
+            <div class="metric-value">25+</div>
+            <div class="metric-label">Years serving Fiji</div>
           </div>
           <div>
-            <div class="stat-value">5K+</div>
-            <div class="stat-label">Motors rewound</div>
+            <div class="metric-value">5K+</div>
+            <div class="metric-label">Motors rewound</div>
           </div>
           <div>
-            <div class="stat-value">48hr</div>
-            <div class="stat-label">Emergency turnaround</div>
+            <div class="metric-value">48hr</div>
+            <div class="metric-label">Emergency turnaround</div>
           </div>
           <div>
-            <div class="stat-value">100%</div>
-            <div class="stat-label">Quality guarantee</div>
+            <div class="metric-value">100%</div>
+            <div class="metric-label">Quality guarantee</div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Services -->
-    <section class="section" id="services">
+    <!-- Services: headline left, list right -->
+    <section class="section section--spacious" id="services">
       <div class="container">
         <div class="two-col">
-          <div class="section-header">
+          <div>
             <p class="label">What we do</p>
             <h2 class="heading-lg">Industrial electrical expertise, end to end.</h2>
-            <p class="body-muted" style="margin-top:24px">
+            <p class="body-muted" style="margin-top:var(--spacing-24)">
               From precision rewinding to wholesale electrical supplies — we keep Fiji's factories, hotels, utilities, and telecom networks running.
             </p>
           </div>
-          <div class="service-list">
-            <article class="service-item">
-              <span class="service-number">01</span>
+          <div class="block-list">
+            <article class="block-item">
+              <span class="block-index">01</span>
               <div>
-                <h3 class="service-title">Motor &amp; Generator Rewinding</h3>
-                <p class="body-muted" style="margin-top:12px">
-                  AC and DC motor rewinding for pumps, compressors, fans, and industrial machinery. Complete generator and alternator overhauls with Class F &amp; H insulation, megger testing, and performance certification.
+                <h3 class="heading-xs">Motor &amp; Generator Rewinding</h3>
+                <p class="body-muted" style="margin-top:var(--spacing-12)">
+                  AC and DC motor rewinding for pumps, compressors, fans, and industrial machinery. Complete generator overhauls with Class F &amp; H insulation and megger certification.
                 </p>
               </div>
             </article>
-            <article class="service-item">
-              <span class="service-number">02</span>
+            <article class="block-item">
+              <span class="block-index">02</span>
               <div>
-                <h3 class="service-title">Electrical Supplies</h3>
-                <p class="body-muted" style="margin-top:12px">
-                  Wholesale and retail electrical components — cables, switchgear, motors, bearings, and industrial equipment. Trusted supplier to sugar mills, hotels, water treatment plants, and manufacturing facilities.
+                <h3 class="heading-xs">Electrical Supplies</h3>
+                <p class="body-muted" style="margin-top:var(--spacing-12)">
+                  Wholesale cables, switchgear, motors, bearings, and industrial equipment. Trusted by sugar mills, hotels, and manufacturing facilities across Fiji.
                 </p>
               </div>
             </article>
-            <article class="service-item">
-              <span class="service-number">03</span>
+            <article class="block-item">
+              <span class="block-index">03</span>
               <div>
-                <h3 class="service-title">Pump &amp; Equipment Repair</h3>
-                <p class="body-muted" style="margin-top:12px">
-                  Submersible, centrifugal, and borehole pump repairs. On-site service across Viti Levu with mobile workshop teams for emergency removal, installation, and diagnostics.
+                <h3 class="heading-xs">Pump &amp; Equipment Repair</h3>
+                <p class="body-muted" style="margin-top:var(--spacing-12)">
+                  Submersible, centrifugal, and borehole pump repairs. On-site mobile workshop teams across Viti Levu for emergency removal and installation.
                 </p>
               </div>
             </article>
-            <article class="service-item">
-              <span class="service-number">04</span>
+            <article class="block-item">
+              <span class="block-index">04</span>
               <div>
-                <h3 class="service-title">Testing &amp; Preventive Maintenance</h3>
-                <p class="body-muted" style="margin-top:12px">
-                  Winding resistance checks, vibration analysis, and scheduled maintenance programs to extend equipment life and prevent costly downtime.
+                <h3 class="heading-xs">Testing &amp; Maintenance</h3>
+                <p class="body-muted" style="margin-top:var(--spacing-12)">
+                  Winding resistance checks, vibration analysis, and scheduled maintenance to extend equipment life and prevent costly downtime.
                 </p>
               </div>
             </article>
@@ -162,49 +160,55 @@
       </div>
     </section>
 
-    <!-- Telecom -->
-    <section class="section" id="telecom">
+    <!-- Telecom: zigzag — visual/metrics left, copy right -->
+    <section class="section section--spacious" id="telecom">
       <div class="container">
-        <div class="two-col">
-          <div>
-            <p class="label">Telecommunications</p>
-            <h2 class="heading-lg">Connecting Fiji.<br>Authorized partner.</h2>
-            <p class="body-muted" style="margin-top:24px; max-width:520px">
-              Beyond industrial electrical work, we partner with Fiji's leading mobile networks — supplying equipment, installation support, and maintenance for Vodafone and Digicel infrastructure and retail operations.
-            </p>
-            <div class="partner-row">
-              <div class="partner-badge">
-                <span class="partner-dot"></span>
-                Vodafone Fiji
+        <div class="two-col two-col--reverse">
+          <div class="two-col-visual">
+            <div>
+              <p class="label">Partners</p>
+              <div class="partners" style="margin-top:0">
+                <div class="partner"><span class="dot"></span>Vodafone Fiji</div>
+                <div class="partner"><span class="dot dot--amber"></span>Digicel Fiji</div>
               </div>
-              <div class="partner-badge">
-                <span class="partner-dot" style="background:#ffb829"></span>
-                Digicel Fiji
+              <div class="metrics" style="margin-top:var(--spacing-60); grid-template-columns:1fr 1fr">
+                <div>
+                  <div class="metric-value" style="font-size:var(--text-subheading)">24/7</div>
+                  <div class="metric-label">Network support</div>
+                </div>
+                <div>
+                  <div class="metric-value" style="font-size:var(--text-subheading)">ISO</div>
+                  <div class="metric-label">Compliant processes</div>
+                </div>
               </div>
             </div>
           </div>
           <div>
-            <p class="label">Network services</p>
-            <div class="service-list" style="margin-top:0">
-              <article class="service-item" style="border:none; padding-bottom:24px">
-                <span class="service-number">→</span>
+            <p class="label">Telecommunications</p>
+            <h2 class="heading-lg">Connecting Fiji.<br>Authorized partner.</h2>
+            <p class="body-muted" style="margin-top:var(--spacing-24)">
+              Beyond industrial electrical work, we partner with Fiji's leading mobile networks — supplying equipment, installation, and maintenance for Vodafone and Digicel infrastructure.
+            </p>
+            <div class="block-list" style="margin-top:var(--spacing-60)">
+              <article class="block-item">
+                <span class="block-index">→</span>
                 <div>
-                  <h3 class="service-title" style="font-size:24px">Tower &amp; site electrical</h3>
-                  <p class="body-muted" style="margin-top:8px">Power systems, backup generators, and grounding for telecom sites.</p>
+                  <h3 class="heading-xs" style="font-size:var(--text-heading-2xs)">Tower &amp; site electrical</h3>
+                  <p class="body-muted" style="margin-top:var(--spacing-6)">Power systems, backup generators, and grounding for telecom sites.</p>
                 </div>
               </article>
-              <article class="service-item" style="border:none; padding-bottom:24px">
-                <span class="service-number">→</span>
+              <article class="block-item">
+                <span class="block-index">→</span>
                 <div>
-                  <h3 class="service-title" style="font-size:24px">Retail &amp; distribution</h3>
-                  <p class="body-muted" style="margin-top:8px">Electrical fit-out and equipment supply for network retail outlets.</p>
+                  <h3 class="heading-xs" style="font-size:var(--text-heading-2xs)">Retail &amp; distribution</h3>
+                  <p class="body-muted" style="margin-top:var(--spacing-6)">Electrical fit-out and equipment for network retail outlets.</p>
                 </div>
               </article>
-              <article class="service-item" style="border:none; padding-bottom:0">
-                <span class="service-number">→</span>
+              <article class="block-item">
+                <span class="block-index">→</span>
                 <div>
-                  <h3 class="service-title" style="font-size:24px">Emergency response</h3>
-                  <p class="body-muted" style="margin-top:8px">24/7 on-call support for critical network infrastructure failures.</p>
+                  <h3 class="heading-xs" style="font-size:var(--text-heading-2xs)">Emergency response</h3>
+                  <p class="body-muted" style="margin-top:var(--spacing-6)">On-call support for critical network infrastructure failures.</p>
                 </div>
               </article>
             </div>
@@ -214,7 +218,7 @@
     </section>
 
     <!-- About -->
-    <section class="section" id="about">
+    <section class="section section--spacious" id="about">
       <div class="container">
         <div class="two-col">
           <div>
@@ -222,63 +226,59 @@
             <h2 class="heading-lg">Fiji's trusted winding house.</h2>
           </div>
           <div>
-            <p class="body-text" style="margin-bottom:24px">
-              For over two decades, Lal's Motor Winders has been the go-to specialist when machinery stops. Our Suva workshop houses modern winding machines, precision testing equipment, and a team of certified technicians who treat every job as critical infrastructure.
+            <p class="body-text" style="max-width:520px; margin-bottom:var(--spacing-24)">
+              For over two decades, Lal's Motor Winders has been the go-to specialist when machinery stops. Our Suva workshop houses modern winding machines, precision testing equipment, and certified technicians.
             </p>
             <p class="body-muted">
-              We understand that downtime costs money. That's why we offer emergency 48-hour service, transparent quoting, pickup and delivery across Viti Levu, and a warranty on every rewind. From sugar mills to telecom towers — when Fiji needs power restored, they call Lal's.
+              We offer emergency 48-hour service, transparent quoting, pickup and delivery across Viti Levu, and a warranty on every rewind. From sugar mills to telecom towers — when Fiji needs power restored, they call Lal's.
             </p>
-            <div class="stats-row" style="margin-top:48px; grid-template-columns:repeat(2,1fr)">
-              <div>
-                <div class="stat-value" style="font-size:36px">ISO</div>
-                <div class="stat-label">Compliant processes</div>
-              </div>
-              <div>
-                <div class="stat-value" style="font-size:36px">24/7</div>
-                <div class="stat-label">Emergency support</div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- CTA -->
+    <!-- CTA — single violet pill -->
     <section class="cta-band">
       <div class="container">
         <p class="label">Get started</p>
-        <h2 class="display">Need a motor rewound or equipment repaired?</h2>
+        <h2 class="display" style="font-size:clamp(36px,6vw,var(--text-heading-lg))">Need a motor rewound?</h2>
         <a href="#contact" class="btn-primary">Get Your Free Quote</a>
       </div>
     </section>
 
     <!-- Contact -->
-    <section class="section" id="contact">
+    <section class="section section--spacious" id="contact">
       <div class="container">
         <div class="contact-grid">
           <div>
             <p class="label">Contact</p>
-            <h2 class="heading-sm" style="margin-bottom:36px">Let's talk power.</h2>
+            <h2 class="heading-sm" style="margin-bottom:var(--spacing-36)">Let's talk power.</h2>
 
-            <div class="contact-detail">
-              <div class="contact-detail-label">Workshop</div>
-              <div class="contact-detail-value">Lal's Motor Winders (Fiji) PTE Limited<br>Suva, Fiji Islands</div>
+            <div class="contact-block">
+              <p class="caption">Workshop</p>
+              <p class="body-text" style="max-width:none; margin-top:var(--spacing-6)">
+                Lal's Motor Winders (Fiji) PTE Limited<br>Suva, Fiji Islands
+              </p>
             </div>
-            <div class="contact-detail">
-              <div class="contact-detail-label">Phone</div>
-              <div class="contact-detail-value"><a href="tel:+6790000000">+679 XXX XXXX</a></div>
+            <div class="contact-block">
+              <p class="caption">Phone</p>
+              <p class="body-text" style="max-width:none; margin-top:var(--spacing-6)">
+                <a href="tel:+6790000000" class="link-accent">+679 XXX XXXX</a>
+              </p>
             </div>
-            <div class="contact-detail">
-              <div class="contact-detail-label">Email</div>
-              <div class="contact-detail-value"><a href="mailto:info@lalsmotorwinders.fj">info@lalsmotorwinders.fj</a></div>
+            <div class="contact-block">
+              <p class="caption">Email</p>
+              <p class="body-text" style="max-width:none; margin-top:var(--spacing-6)">
+                <a href="mailto:info@lalsmotorwinders.fj" class="link-accent">info@lalsmotorwinders.fj</a>
+              </p>
             </div>
-            <div class="contact-detail">
-              <div class="contact-detail-label">Hours</div>
-              <div class="contact-detail-value">
+            <div class="contact-block">
+              <p class="caption">Hours</p>
+              <p class="body-muted" style="margin-top:var(--spacing-6); max-width:none">
                 Mon – Fri: 7:30 AM – 5:00 PM<br>
                 Sat: 8:00 AM – 12:00 PM<br>
                 Emergency: 24/7 on call
-              </div>
+              </p>
             </div>
           </div>
 
@@ -323,11 +323,11 @@
       <div class="footer-inner">
         <a href="#" class="logo" aria-label="Lal's Motor Winders Fiji">
           <svg class="logo-icon" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-            <path d="M14 2L26 8v12L14 26 2 20V8L14 2z" stroke="#8052ff" stroke-width="1.5" fill="none"/>
+            <path d="M14 3L24 9v10L14 25 4 19V9L14 3z" stroke="#8052ff" stroke-width="1.5" fill="none"/>
           </svg>
           <span class="logo-wordmark">Lal's Motor Winders</span>
         </a>
-        <p class="footer-copy">&copy; 2026 Lal's Motor Winders (Fiji) PTE Limited. All rights reserved.</p>
+        <p class="footer-copy">&copy; 2026 Lal's Motor Winders (Fiji) PTE Limited</p>
       </div>
     </div>
   </footer>

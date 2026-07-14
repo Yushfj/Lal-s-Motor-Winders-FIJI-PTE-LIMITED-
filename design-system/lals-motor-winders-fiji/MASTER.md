@@ -3,24 +3,26 @@
 > Motor windings floating on black velvet
 
 **Theme:** dark  
-**Adapted from:** Dala constellation aesthetic → electrical stator winding particle field
+**Base system:** [Dala](https://dala.ai) constellation aesthetic
 
-## Brand Adaptation
+## Implementation
 
-- **Void canvas** `#000000` — industrial night, machinery at rest
-- **Electric Iris** `#8052ff` — primary CTA, brand mark (violet = energized coil)
-- **Saffron Spark** `#ffb829` — copper winding highlights, electrical arc accents
-- **Deep Verdant** `#15846e` — secondary gradient stop, telecom trust signal
-- **Signature visual:** triangular particles forming a motor stator cross-section with copper windings and amber spark trails — distributed power, not hierarchical data
+Full Dala token set applied in `css/styles.css`:
+- Pure `#000000` void canvas — no gray panels, cards, borders, or shadows
+- Electric Iris `#8052ff` — sole filled button color
+- Saffron Spark `#ffb829` — amber labels and accent links
+- Inter as PPNeueMontreal substitute — weight 200 body, weight 400 display
+- Display scale: 113px / 78px / 42px with -0.04em tracking
+- Spacing base unit: 6px (6–120px scale)
+- Button radius: 22.5px pill
 
-## Services
+## Signature Visual
 
-1. Motor & generator rewinding
-2. Electrical supplies & industrial equipment
-3. Telecommunications — Vodafone & Digicel authorized partner
+Dense triangular particle constellation forming a motor stator / organic hybrid shape — hero canvas plus full-page ambient field.
 
-## Typography
+## Content
 
-- **Display:** Inter weight 400, 78–113px, -0.04em tracking
-- **Body:** Inter weight 200, 18px
-- **Nav/labels:** Inter weight 600, 14px uppercase, 0.025em tracking
+- Motor & generator rewinding
+- Electrical supplies
+- Pump & equipment repair
+- Telecommunications — Vodafone & Digicel Fiji
