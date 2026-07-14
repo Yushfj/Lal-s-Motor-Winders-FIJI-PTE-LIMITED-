@@ -9,10 +9,17 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+    }
+  }
+  </script>
 </head>
 <body>
 
-  <canvas id="ambient-canvas" aria-hidden="true"></canvas>
+  <canvas id="constellation-canvas" aria-hidden="true"></canvas>
 
   <header class="nav">
     <div class="container">
@@ -76,9 +83,7 @@
               <a href="#services" class="btn-ghost">Explore services</a>
             </div>
           </div>
-          <div class="hero-visual" aria-hidden="true">
-            <canvas id="hero-canvas"></canvas>
-          </div>
+          <div class="hero-visual" aria-hidden="true"></div>
         </div>
       </div>
     </section>
@@ -332,7 +337,7 @@
     </div>
   </footer>
 
-  <script src="js/particles.js"></script>
+  <script type="module" src="js/particles.js"></script>
   <script>
     const toggle = document.getElementById('menu-toggle');
     const menu = document.getElementById('mobile-menu');

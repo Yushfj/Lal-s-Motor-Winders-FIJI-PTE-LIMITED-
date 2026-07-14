@@ -86,8 +86,8 @@ a { color: inherit; text-decoration: none; }
 
 img { max-width: 100%; display: block; }
 
-/* Ambient particle field — full-page void */
-#ambient-canvas {
+/* Dala constellation — full-viewport WebGL field */
+#constellation-canvas {
   position: fixed;
   inset: 0;
   width: 100%;
@@ -356,12 +356,7 @@ main, .nav, .footer {
   aspect-ratio: 1;
   min-height: 320px;
   max-height: 640px;
-}
-
-#hero-canvas {
-  width: 100%;
-  height: 100%;
-  display: block;
+  pointer-events: none;
 }
 
 /* ——— Sections ——— */
