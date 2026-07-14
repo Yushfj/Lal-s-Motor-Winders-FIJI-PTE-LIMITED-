@@ -1,16 +1,6 @@
 # Lal's Motor Winders (Fiji) PTE Limited
 
-Dark-stage landing page for Lal's Motor Winders Fiji — motor & generator rewinding, electrical supplies, and telecommunications (Vodafone & Digicel) across Fiji.
-
-## Design
-
-Inspired by the Dala constellation aesthetic, adapted for electrical industry:
-- Pure black void canvas with violet (`#8052ff`) and amber (`#ffb829`) accents
-- Animated motor stator winding particle visualization
-- Inter typography at weight 200 (body) and 400 (display) — scale over weight for hierarchy
-- No cards, borders, or shadows — typographic composition on void
-
-Design tokens: `design-system/lals-motor-winders-fiji/MASTER.md`
+Landing page modeled exactly on [dala.craftedbygc.com](https://dala.craftedbygc.com) — black void, violet accent, constellation particles, monolithic typography.
 
 ## Preview
 
@@ -18,16 +8,22 @@ Design tokens: `design-system/lals-motor-winders-fiji/MASTER.md`
 python3 -m http.server 8080
 ```
 
-Open [http://localhost:8080](http://localhost:8080)
+Open http://localhost:8080
 
 ## Structure
 
-```
-index.html          Landing page
-css/styles.css      Design tokens & layout
-js/particles.js     Motor winding particle canvas
-```
+Matches Dala's section rhythm:
+1. Full-viewport hero with stacked display title + CTA
+2. Right-aligned introduction
+3. Center manifesto copy
+4. Left-aligned services
+5. Right-aligned telecom (Vodafone / Digicel)
+6. About
+7. Full-viewport final CTA
+8. Contact
 
-## Customization
+## Tech
 
-Update contact details in `index.html` (phone, email, address) with your actual business information.
+- Three.js WebGL particle constellation (noise drift + mouse parallax)
+- Inter as PPNeueMontreal substitute (weight 200 body / 400 display)
+- Dala color tokens: `#000000`, `#8052ff`, `#ffb829`
