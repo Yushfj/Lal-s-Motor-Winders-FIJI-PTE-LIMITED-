@@ -3,11 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Lal's Motor Winders (Fiji) PTE Limited — motor & generator rewinding, electrical supplies, and telecommunications across Fiji.">
+  <meta name="description" content="Lal's Motor Winders (Fiji) PTE Limited — motor & generator rewinding, electrical supplies, and telecommunications across Fiji. Head Office Labasa · Suva Branch.">
+  <meta name="theme-color" content="#000000">
   <title>Lal's Motor Winders Fiji</title>
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Lal's Motor Winders (Fiji) PTE Limited">
+  <meta property="og:description" content="Motor & generator rewinding, electrical supplies, and telecom for industry across Fiji. 48-hour emergency service.">
+  <meta property="og:image" content="assets/workshop-copper.jpg">
+  <meta property="og:locale" content="en_FJ">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Lal's Motor Winders Fiji">
+  <meta name="twitter:description" content="Wind. Power. Endure. — Fiji's industrial rewind specialists.">
+  <meta name="twitter:image" content="assets/workshop-copper.jpg">
+
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;400;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
   <script type="importmap">
   {
@@ -30,10 +44,13 @@
   </div>
 
   <canvas id="canvas" aria-hidden="true"></canvas>
+  <div id="cursor-trail" class="cursor-trail" aria-hidden="true"></div>
+  <div class="scroll-ink" id="scroll-ink" aria-hidden="true"></div>
 
   <nav class="progress-rail" id="progress-rail" aria-label="Section progress">
     <button class="progress-dot is-active" data-target="top" aria-label="Hero"></button>
     <button class="progress-dot" data-target="services" aria-label="Services"></button>
+    <button class="progress-dot" data-target="process" aria-label="Process"></button>
     <button class="progress-dot" data-target="spark" aria-label="Telecom"></button>
     <button class="progress-dot" data-target="about" aria-label="About"></button>
     <button class="progress-dot" data-target="cta" aria-label="Quote"></button>
@@ -41,9 +58,11 @@
 
   <div class="shape-chip" id="shape-chip" aria-hidden="true">Motor stator</div>
 
+  <button type="button" class="sound-toggle" id="sound-toggle" aria-pressed="false" title="Toggle energize click sound">Sound off</button>
+
   <header class="header">
     <div class="header__inner">
-      <a href="#" class="logo" aria-label="Lal's Motor Winders Fiji">
+      <a href="#top" class="logo" aria-label="Lal's Motor Winders Fiji">
         <svg class="logo-icon" viewBox="0 0 28 28" fill="none" aria-hidden="true">
           <defs>
             <linearGradient id="logo-grad" x1="0" y1="0" x2="28" y2="28">
@@ -59,6 +78,7 @@
 
       <nav class="nav-desktop" aria-label="Main">
         <a href="#services">Services</a>
+        <a href="#process">Process</a>
         <a href="#spark">Telecom</a>
         <a href="#about">About</a>
         <a href="#contact">Contact</a>
@@ -77,34 +97,49 @@
 
   <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile">
     <a href="#services">Services</a>
+    <a href="#process">Process</a>
     <a href="#spark">Telecom</a>
     <a href="#about">About</a>
     <a href="#contact">Contact</a>
     <a href="#contact" class="btn">Request Quote</a>
+    <a href="https://wa.me/6799926898" class="btn btn--ghost" target="_blank" rel="noopener">WhatsApp</a>
   </nav>
 
   <main>
-    <!-- 0 · Hero — text left, constellation right -->
+    <!-- Hero -->
     <section class="section landing section--screen" id="top">
       <div class="text-shield">
-        <h1 class="landing__title title-display reveal-hero reveal-hero-1">
-          <span>Wind.</span>
-          <span>Power.</span>
-          <span>Endure.</span>
+        <p class="brand-hero reveal-hero reveal-hero-0">Lal's</p>
+        <h1 class="landing__title title-display">
+          <span class="line-reveal reveal-hero reveal-hero-1">Wind.</span>
+          <span class="line-reveal reveal-hero reveal-hero-2">Power.</span>
+          <span class="line-reveal reveal-hero reveal-hero-3">Endure.</span>
         </h1>
         <div class="landing__body">
-          <div class="eyebrow reveal-hero reveal-hero-2">Fiji's industrial heartbeat. Rewound to last.</div>
-          <p class="body-lg reveal-hero reveal-hero-3">
+          <div class="eyebrow reveal-hero reveal-hero-4">Fiji's industrial heartbeat. Rewound to last.</div>
+          <p class="body-lg reveal-hero reveal-hero-5">
             Lal's Motor Winders (Fiji) PTE Limited — motor and generator rewinding, electrical supplies, and telecommunications for industry across the Pacific.
           </p>
-          <div class="reveal-hero reveal-hero-4">
+          <div class="cta-row reveal-hero reveal-hero-6">
             <a href="#contact" class="btn">Request Quote</a>
+            <a href="https://wa.me/6799926898" class="text-link" target="_blank" rel="noopener">Message on WhatsApp →</a>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- 1 · Services — text right -->
+    <!-- Proof strip -->
+    <section class="proof" aria-label="Credentials">
+      <div class="proof__inner">
+        <span class="proof__item"><em>20+</em> years</span>
+        <span class="proof__sep" aria-hidden="true">·</span>
+        <span class="proof__item"><em>48-hour</em> emergency</span>
+        <span class="proof__sep" aria-hidden="true">·</span>
+        <span class="proof__item"><em>Vodafone &amp; Digicel</em> authorized</span>
+      </div>
+    </section>
+
+    <!-- Services intro -->
     <section class="section section--tall introduction" id="services">
       <div class="introduction__inner text-shield text-shield--right reveal">
         <h2 class="introduction__title title-section">Make downtime disappear</h2>
@@ -114,13 +149,51 @@
       </div>
     </section>
 
-    <!-- Center manifesto -->
+    <!-- Craft photography -->
+    <section class="craft" aria-label="Workshop craft">
+      <div class="craft__plane">
+        <img src="assets/workshop-copper.jpg" alt="Copper motor windings in the workshop" width="1600" height="1024" loading="lazy">
+        <div class="craft__veil"></div>
+      </div>
+      <div class="craft__copy text-shield reveal">
+        <p class="eyebrow">The craft</p>
+        <h2 class="title-section">Copper. Core. Current.</h2>
+        <p class="body-muted">Every rewind starts with the winding — precision copper, class insulation, and load testing that restores motors to industrial duty.</p>
+      </div>
+    </section>
+
+    <!-- Manifesto -->
     <section class="section section--tall">
       <div class="center-copy text-shield text-shield--center reveal">
         <p>This is industrial Fiji today. Critical motors, pumps, and generators keeping production alive — until something burns out.</p>
         <p><span class="highlight">Every hour of downtime costs money.</span> Finding the right rewind specialist shouldn't be a gamble.</p>
         <p>Incomplete repairs and delayed turnarounds leave teams scrambling. Overseas suppliers are slow. Local options are inconsistent.</p>
         <p>They fail to understand what Fiji's industries need when equipment goes down and production can't wait.</p>
+      </div>
+    </section>
+
+    <!-- Process: Inspect → Rewind → Certify -->
+    <section class="section section--tall" id="process">
+      <div class="process text-shield reveal">
+        <p class="eyebrow">How we work</p>
+        <h2 class="title-section process__title">Inspect. Rewind. Certify.</h2>
+        <div class="process__beats">
+          <div class="process__beat reveal reveal-delay-1">
+            <span class="process__num">01</span>
+            <h3 class="process__name">Inspect</h3>
+            <p class="body-muted">Diagnose windings, insulation, and mechanical wear before a single turn of copper is laid.</p>
+          </div>
+          <div class="process__beat reveal reveal-delay-2">
+            <span class="process__num">02</span>
+            <h3 class="process__name">Rewind</h3>
+            <p class="body-muted">Precision winding with class F &amp; H insulation — built for Fiji's heat, humidity, and duty cycles.</p>
+          </div>
+          <div class="process__beat reveal reveal-delay-3">
+            <span class="process__num">03</span>
+            <h3 class="process__name">Certify</h3>
+            <p class="body-muted">Megger testing, load checks, and documentation so your motor returns ready for the floor.</p>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -141,13 +214,26 @@
         <div class="service-row">
           <span class="service-index">03</span>
           <h3 class="service-name">Pump &amp; Equipment Repair</h3>
-          <p class="body-muted">Submersible, centrifugal, and borehole pump repairs. Mobile workshop teams across Viti Levu.</p>
+          <p class="body-muted">Submersible, centrifugal, and borehole pump repairs. Mobile workshop teams across Viti Levu and Vanua Levu.</p>
         </div>
         <div class="service-row">
           <span class="service-index">04</span>
           <h3 class="service-name">Testing &amp; Maintenance</h3>
           <p class="body-muted">Winding resistance checks, vibration analysis, and preventive programs that stop failures before they start.</p>
         </div>
+      </div>
+    </section>
+
+    <!-- Second craft image -->
+    <section class="craft craft--alt" aria-label="Workshop floor">
+      <div class="craft__plane">
+        <img src="assets/workshop-stator.jpg" alt="Electric motor stator on the workshop bench" width="1600" height="1024" loading="lazy">
+        <div class="craft__veil craft__veil--alt"></div>
+      </div>
+      <div class="craft__copy craft__copy--right text-shield text-shield--right reveal">
+        <p class="eyebrow">The floor</p>
+        <h2 class="title-section">Built where industry can't wait.</h2>
+        <p class="body-muted">From Labasa head office to our Suva branch — pickup, rewind, and delivery that keeps Fiji's production lines moving.</p>
       </div>
     </section>
 
@@ -176,20 +262,32 @@
           Our mission is to keep industry moving — reframing electrical repair from <span class="highlight">waiting weeks</span> to <span class="t-yellow">getting back online</span>.
         </p>
         <p class="body-muted" style="margin-bottom:1.25rem">
-          For over two decades, Lal's Motor Winders has been the go-to specialist when machinery stops. Our Suva workshop houses modern winding machines, precision testing equipment, and certified technicians.
+          For over two decades, Lal's Motor Winders has been the go-to specialist when machinery stops. Modern winding machines, precision testing, and certified technicians.
         </p>
         <p class="body-muted">
-          Emergency 48-hour service. Transparent quoting. Pickup and delivery across Viti Levu. A warranty on every rewind.
+          Emergency 48-hour service. Transparent quoting. Pickup and delivery. A warranty on every rewind.
         </p>
       </div>
+    </section>
+
+    <!-- Testimonial -->
+    <section class="section section--tall testimonial-section">
+      <blockquote class="testimonial text-shield text-shield--center reveal">
+        <p class="testimonial__quote">“When our compressor motor failed mid-season, Lal's had it inspected, rewound, and back on the line before we lost the week. That's the difference.”</p>
+        <footer class="testimonial__cite">
+          <span class="testimonial__name">Operations Manager</span>
+          <span class="testimonial__org">Hospitality · Viti Levu</span>
+        </footer>
+      </blockquote>
     </section>
 
     <!-- Final CTA -->
     <section class="section final-cta" id="cta">
       <div class="text-shield text-shield--center">
         <h2 class="title-xl reveal">Your motors deserve precision. Ask Lal's for it.</h2>
-        <div class="reveal reveal-delay-2">
+        <div class="cta-row cta-row--center reveal reveal-delay-2">
           <a href="#contact" class="btn">Request Quote</a>
+          <a href="https://wa.me/6799926898" class="text-link" target="_blank" rel="noopener">Message on WhatsApp →</a>
         </div>
       </div>
     </section>
@@ -202,16 +300,24 @@
           <h2 class="title-section" style="margin-bottom:2.5rem">Let's talk power.</h2>
 
           <div class="contact-item">
-            <div class="contact-label">Workshop</div>
-            <div class="contact-value">Lal's Motor Winders (Fiji) PTE Limited<br>Suva, Fiji Islands</div>
+            <div class="contact-label">Head Office</div>
+            <div class="contact-value">Nanuku Street<br>Labasa, Fiji</div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-label">Suva Branch</div>
+            <div class="contact-value">Walubay Street<br>Suva, Fiji</div>
           </div>
           <div class="contact-item">
             <div class="contact-label">Phone</div>
-            <div class="contact-value"><a href="tel:+6790000000">+679 XXX XXXX</a></div>
+            <div class="contact-value"><a href="tel:+6799926898">+679 992 6898</a></div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-label">WhatsApp</div>
+            <div class="contact-value"><a href="https://wa.me/6799926898" target="_blank" rel="noopener">+679 992 6898</a></div>
           </div>
           <div class="contact-item">
             <div class="contact-label">Email</div>
-            <div class="contact-value"><a href="mailto:info@lalsmotorwinders.fj">info@lalsmotorwinders.fj</a></div>
+            <div class="contact-value"><a href="mailto:lalsmws315@gmail.com">lalsmws315@gmail.com</a></div>
           </div>
           <div class="contact-item">
             <div class="contact-label">Hours</div>
@@ -223,7 +329,7 @@
           </div>
         </div>
 
-        <form class="form reveal reveal-delay-2" action="#" method="POST">
+        <form class="form reveal reveal-delay-2" id="enquiry-form" action="mailto:lalsmws315@gmail.com" method="POST" enctype="text/plain">
           <div class="field">
             <label for="name">Full Name</label>
             <input type="text" id="name" name="name" required autocomplete="name">
@@ -252,28 +358,33 @@
             <label for="message">Message</label>
             <textarea id="message" name="message" rows="4" placeholder="Describe your equipment…"></textarea>
           </div>
-          <button type="submit" class="btn" style="align-self:flex-start">Send Enquiry</button>
+          <div class="cta-row">
+            <button type="submit" class="btn">Send Enquiry</button>
+            <a href="https://wa.me/6799926898" class="text-link" target="_blank" rel="noopener">Or WhatsApp us →</a>
+          </div>
         </form>
       </div>
     </section>
   </main>
 
   <footer class="site-footer">
-    <a href="#" class="logo" aria-label="Lal's Motor Winders Fiji">
+    <a href="#top" class="logo" aria-label="Lal's Motor Winders Fiji">
       <svg class="logo-icon" viewBox="0 0 28 28" fill="none" aria-hidden="true">
         <path d="M14 3L24 9v10L14 25 4 19V9L14 3z" stroke="#8052ff" stroke-width="1.5" fill="none"/>
       </svg>
       <span class="logo-wordmark">Lal's Motor Winders</span>
     </a>
-    <p class="footer-copy">&copy; 2026 Lal's Motor Winders (Fiji) PTE Limited. All rights reserved.</p>
+    <p class="footer-copy">&copy; 2026 Lal's Motor Winders (Fiji) PTE Limited. Labasa · Suva.</p>
     <div class="footer-links">
       <a href="#services">Services</a>
       <a href="#contact">Contact</a>
-      <a href="mailto:info@lalsmotorwinders.fj">Email</a>
+      <a href="mailto:lalsmws315@gmail.com">Email</a>
+      <a href="https://wa.me/6799926898" target="_blank" rel="noopener">WhatsApp</a>
     </div>
   </footer>
 
   <script type="module" src="js/particles.js"></script>
+  <script src="js/ui.js"></script>
   <script>
     /* Loader */
     const loader = document.getElementById('loader');
@@ -348,25 +459,12 @@
       const mid = window.scrollY + window.innerHeight * 0.4;
       let active = 0;
       targets.forEach((el, i) => {
-        const top = el.offsetTop;
-        if (mid >= top) active = i;
+        if (mid >= el.offsetTop) active = i;
       });
       dots.forEach((d, i) => d.classList.toggle('is-active', i === active));
     }
     window.addEventListener('scroll', updateDots, { passive: true });
     updateDots();
-
-    /* Shape chip */
-    const chip = document.getElementById('shape-chip');
-    const SHAPE_NAMES = ['Motor stator', 'Generator', 'Lightning', 'Transformer', 'Spark burst'];
-    let chipTimer;
-    window.addEventListener('constellation-shape', (e) => {
-      const name = SHAPE_NAMES[e.detail.shape] || '';
-      chip.textContent = name;
-      chip.classList.add('is-on');
-      clearTimeout(chipTimer);
-      chipTimer = setTimeout(() => chip.classList.remove('is-on'), 1600);
-    });
 
     /* Magnetic buttons */
     document.querySelectorAll('.btn').forEach((btn) => {

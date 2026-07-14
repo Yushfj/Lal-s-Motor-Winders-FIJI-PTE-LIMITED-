@@ -21,9 +21,11 @@ const COLORS = [
 ];
 
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const COUNT = window.innerWidth < 768 ? 2800 : 5800;
-const AMBIENT = window.innerWidth < 768 ? 180 : 400;
-const LARGE = window.innerWidth < 768 ? 14 : 28;
+const isMobile = window.innerWidth < 768;
+const COUNT = isMobile ? 1400 : 5800;
+const AMBIENT = isMobile ? 80 : 400;
+const LARGE = isMobile ? 6 : 28;
+const useBloom = !reducedMotion && !isMobile;
 
 /* Noise */
 const perm = new Uint8Array(512);
@@ -200,7 +202,7 @@ async function init() {
     canvas, alpha: true, antialias: true, powerPreference: 'high-performance',
   });
   renderer.setClearColor(0x000000, 0);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMobile ? 1.5 : 2));
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 0.95;
 
@@ -210,7 +212,7 @@ async function init() {
 
   let composer = null;
   let bloom = null;
-  if (bloomOk && !reducedMotion) {
+  if (bloomOk && useBloom) {
     try {
       composer = new EffectComposer(renderer);
       composer.addPass(new RenderPass(scene, camera));
@@ -406,7 +408,7 @@ async function init() {
   window.addEventListener('resize', resize);
 
   window.dispatchEvent(new Event('constellation-ready'));
-  console.info('[constellation] ready', { count: COUNT, bloom: !!composer });
+  console.info('[constellation] ready', { count: COUNT, bloom: !!composer, mobile: isMobile });
 
   const clock = new THREE.Clock();
   let running = true, frameId;
