@@ -1,11 +1,11 @@
 /**
- * Dala-style scroll-morphing constellation
- * Particles rearrange into different objects as the page scrolls:
- *   0 Hero      → brain / neural cloud
- *   1 Services  → motor stator winding
- *   2 Spark     → lightbulb
- *   3 About     → globe
- *   4 CTA       → expanded energy cloud
+ * Electrical scroll-morphing constellation
+ * Particles rearrange into electrical objects as the page scrolls:
+ *   0 Hero      → motor stator winding
+ *   1 Services  → motor / generator body
+ *   2 Telecom   → lightning bolt
+ *   3 About     → power transformer
+ *   4 CTA       → spark burst
  */
 
 import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
@@ -64,119 +64,159 @@ function easeInOut(t) {
   return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 }
 
-/* —— Shape samplers —— */
-function sampleBrain(i, n) {
-  const t = i / n;
-  const theta = t * Math.PI * 2 * 17.3;
-  const phi = Math.acos(2 * ((i * 0.6180339887) % 1) - 1);
-  let x = Math.sin(phi) * Math.cos(theta);
-  let y = Math.sin(phi) * Math.sin(theta);
-  let z = Math.cos(phi);
-  const hemi = Math.sign(x) || 1;
-  const hemiPush = 0.2 * hemi * Math.pow(Math.abs(Math.sin(phi)), 1.4);
-  const folds = 0.14 * Math.sin(phi * 8 + theta * 3) + 0.07 * Math.sin(theta * 11);
-  const stem = y < -0.35 ? 0.18 * (y + 0.35) : 0;
-  const r = (0.55 + (i % 7) * 0.06) * (1 + folds) + stem;
-  const s = 3.5;
+/* —— Electrical shape samplers —— */
+
+/** Hero: motor stator cross-section with copper winding slots */
+function sampleStator(i, n) {
+  const rings = 10;
+  const ring = i % rings;
+  const along = Math.floor(i / rings) / Math.max(1, Math.ceil(n / rings));
+  const angle = along * Math.PI * 2;
+
+  // Outer yoke + slotted teeth
+  if (ring < 7) {
+    const r = 1.35 + ring * 0.22;
+    const teeth = 36;
+    const tooth = Math.abs(Math.sin(angle * teeth * 0.5));
+    const slotDepth = tooth > 0.7 ? 0.35 : 0;
+    const rr = r - slotDepth;
+    // Copper winding fill in slots
+    const inSlot = tooth > 0.55 && ring > 2 && ring < 6;
+    const zJitter = inSlot ? (Math.sin(along * 40) * 0.25) : Math.sin(angle * 2) * 0.08;
+    return new THREE.Vector3(
+      Math.cos(angle) * rr,
+      Math.sin(angle) * rr,
+      (ring / rings - 0.5) * 1.4 + zJitter
+    ).multiplyScalar(1.7);
+  }
+
+  // Inner rotor / shaft
+  const r = 0.35 + (ring - 7) * 0.18;
   return new THREE.Vector3(
-    (x + hemiPush) * r * s * 1.05,
-    y * r * s * 0.92,
-    z * r * s * 0.72
+    Math.cos(angle) * r,
+    Math.sin(angle) * r,
+    Math.sin(angle * 4) * 0.15
+  ).multiplyScalar(1.7);
+}
+
+/** Services: complete motor body — cylindrical housing + end bells + shaft */
+function sampleMotorBody(i, n) {
+  const u = i / n;
+  const t = (i * 0.6180339887) % 1;
+  const a = t * Math.PI * 2;
+
+  if (u < 0.55) {
+    // Main cylindrical housing with cooling fins
+    const h = (u / 0.55 - 0.5) * 3.6;
+    const fin = Math.sin(a * 12) * 0.12;
+    const r = 1.55 + fin;
+    return new THREE.Vector3(Math.cos(a) * r, h, Math.sin(a) * r).multiplyScalar(1.35);
+  }
+  if (u < 0.75) {
+    // End bell (front)
+    const h = ((u - 0.55) / 0.2);
+    const r = 1.55 * (1 - h * 0.45);
+    return new THREE.Vector3(Math.cos(a) * r, 1.85 + h * 0.5, Math.sin(a) * r).multiplyScalar(1.35);
+  }
+  if (u < 0.88) {
+    // Rear end
+    const h = ((u - 0.75) / 0.13);
+    const r = 1.55 * (1 - h * 0.4);
+    return new THREE.Vector3(Math.cos(a) * r, -1.85 - h * 0.45, Math.sin(a) * r).multiplyScalar(1.35);
+  }
+  // Drive shaft extending forward
+  const h = ((u - 0.88) / 0.12);
+  const r = 0.22;
+  return new THREE.Vector3(Math.cos(a) * r, 2.4 + h * 1.4, Math.sin(a) * r).multiplyScalar(1.35);
+}
+
+/** Telecom: lightning bolt / electrical arc */
+function sampleLightning(i, n) {
+  const u = i / n;
+  // Zigzag bolt spine from top to bottom
+  const segments = [
+    [0.0, 2.8], [0.45, 1.6], [-0.35, 0.5], [0.55, -0.6], [-0.25, -1.5], [0.15, -2.6],
+  ];
+  const segF = u * (segments.length - 1);
+  const si = Math.min(Math.floor(segF), segments.length - 2);
+  const f = segF - si;
+  const x0 = segments[si][0], y0 = segments[si][1];
+  const x1 = segments[si + 1][0], y1 = segments[si + 1][1];
+  const x = lerp(x0, x1, f);
+  const y = lerp(y0, y1, f);
+
+  // Branch forks
+  const branch = (i % 7 === 0);
+  const side = (i % 2 === 0 ? 1 : -1);
+  const spread = branch ? side * (0.4 + (i % 5) * 0.15) : side * ((i % 11) * 0.04);
+  const z = (Math.sin(u * 20 + i) * 0.35) + (branch ? side * 0.5 : 0);
+
+  // Thickness envelope — denser near core
+  const thick = (1 - Math.abs(u - 0.5) * 1.2) * 0.35;
+  const ox = (Math.sin(i * 12.989) * 0.5 + 0.5) * thick * side;
+
+  return new THREE.Vector3(
+    (x + spread * 0.6 + ox) * 1.8,
+    y * 1.35,
+    z * 1.2
   );
 }
 
-function sampleMotor(i, n) {
-  // Stator winding — concentric slotted rings + coil spirals
-  const rings = 8;
-  const ring = i % rings;
-  const along = Math.floor(i / rings) / Math.ceil(n / rings);
-  const angle = along * Math.PI * 2;
-  const r = 1.1 + ring * 0.28;
-  const slot = Math.sin(angle * 24) * 0.12;
-  const x = Math.cos(angle) * (r + slot);
-  const y = Math.sin(angle) * (r + slot);
-  const z = (ring / rings - 0.5) * 1.6 + Math.sin(angle * 3) * 0.15;
-  // Spiral winding overlay
-  const spiral = (i % 3 === 0);
-  if (spiral) {
-    const sa = along * Math.PI * 6;
-    const sr = 1.4 + (along % 1) * 1.2;
-    return new THREE.Vector3(
-      Math.cos(sa) * sr,
-      Math.sin(sa) * sr,
-      (along - 0.5) * 2.2
-    ).multiplyScalar(1.35);
-  }
-  return new THREE.Vector3(x, y, z).multiplyScalar(1.55);
-}
-
-function sampleBulb(i, n) {
-  // Classic lightbulb — glass sphere + neck + base
-  const t = (i * 0.6180339887) % 1;
+/** About: power transformer — dual coils + core */
+function sampleTransformer(i, n) {
   const u = i / n;
-
-  if (u < 0.62) {
-    // Glass bulb (upper sphere, slightly flattened)
-    const theta = t * Math.PI * 2 * 13;
-    const phi = Math.acos(1 - 2 * ((i * 0.381966) % 1)) * 0.72;
-    const r = 1.55 + Math.sin(phi * 4) * 0.08;
-    return new THREE.Vector3(
-      Math.sin(phi) * Math.cos(theta) * r,
-      Math.cos(phi) * r * 1.15 + 0.85,
-      Math.sin(phi) * Math.sin(theta) * r
-    ).multiplyScalar(1.5);
-  }
-  if (u < 0.82) {
-    // Neck
-    const a = t * Math.PI * 2;
-    const h = (u - 0.62) / 0.2;
-    const r = 0.55 - h * 0.12;
-    return new THREE.Vector3(
-      Math.cos(a) * r,
-      -0.55 - h * 1.1,
-      Math.sin(a) * r
-    ).multiplyScalar(1.5);
-  }
-  // Screw base
-  const a = t * Math.PI * 2 * 3;
-  const h = (u - 0.82) / 0.18;
-  const r = 0.48 + Math.sin(h * Math.PI * 6) * 0.06;
-  return new THREE.Vector3(
-    Math.cos(a) * r,
-    -1.7 - h * 0.9,
-    Math.sin(a) * r
-  ).multiplyScalar(1.5);
-}
-
-function sampleGlobe(i, n) {
-  // Globe with continent-like density bands
-  const golden = Math.PI * (3 - Math.sqrt(5));
-  const y = 1 - (i / (n - 1)) * 2;
-  const radius = Math.sqrt(1 - y * y);
-  const theta = golden * i;
-  let x = Math.cos(theta) * radius;
-  let z = Math.sin(theta) * radius;
-  // Continent ridges — denser bands
-  const land = Math.sin(theta * 3 + y * 5) * Math.cos(y * 8);
-  const bump = 1 + Math.max(0, land) * 0.18;
-  const s = 3.2 * bump;
-  return new THREE.Vector3(x * s, y * s, z * s);
-}
-
-function sampleCloud(i, n) {
-  // Expanded energy cloud / scatter
   const t = (i * 0.6180339887) % 1;
-  const theta = t * Math.PI * 2 * 19;
-  const phi = Math.acos(2 * ((i * 0.381966) % 1) - 1);
-  const r = 1.2 + ((i * 7) % 10) * 0.28 + Math.sin(theta * 2) * 0.4;
-  return new THREE.Vector3(
-    Math.sin(phi) * Math.cos(theta) * r,
-    Math.sin(phi) * Math.sin(theta) * r * 0.7,
-    Math.cos(phi) * r * 0.85
-  ).multiplyScalar(1.8);
+  const a = t * Math.PI * 2;
+
+  if (u < 0.38) {
+    // Left coil (primary)
+    const h = (t - 0.5) * 3.2;
+    const layer = Math.floor((u / 0.38) * 6);
+    const r = 0.7 + layer * 0.14;
+    return new THREE.Vector3(-1.35 + Math.cos(a) * r * 0.35, h, Math.sin(a) * r).multiplyScalar(1.4);
+  }
+  if (u < 0.76) {
+    // Right coil (secondary)
+    const h = (t - 0.5) * 3.2;
+    const layer = Math.floor(((u - 0.38) / 0.38) * 6);
+    const r = 0.7 + layer * 0.14;
+    return new THREE.Vector3(1.35 + Math.cos(a) * r * 0.35, h, Math.sin(a) * r).multiplyScalar(1.4);
+  }
+  // Laminated iron core (E/I center column + yokes)
+  const h = (t - 0.5) * 3.4;
+  const corePart = (i % 3);
+  if (corePart === 0) {
+    return new THREE.Vector3((t - 0.5) * 0.5, h, (i % 5) * 0.08 - 0.16).multiplyScalar(1.4);
+  }
+  if (corePart === 1) {
+    return new THREE.Vector3((t - 0.5) * 2.8, 1.7, (i % 4) * 0.06).multiplyScalar(1.4);
+  }
+  return new THREE.Vector3((t - 0.5) * 2.8, -1.7, (i % 4) * 0.06).multiplyScalar(1.4);
 }
 
-const SHAPES = [sampleBrain, sampleMotor, sampleBulb, sampleGlobe, sampleCloud];
+/** CTA: electrical spark / discharge burst */
+function sampleSparkBurst(i, n) {
+  const t = (i * 0.6180339887) % 1;
+  const theta = t * Math.PI * 2 * 21;
+  const phi = Math.acos(2 * ((i * 0.381966) % 1) - 1);
+
+  // Radial sparks from core — longer rays
+  const ray = (i % 9 === 0);
+  const r = ray
+    ? 1.5 + ((i * 13) % 10) * 0.45
+    : 0.6 + ((i * 7) % 10) * 0.22 + Math.sin(theta * 3) * 0.25;
+
+  // Jagged spark paths
+  const jag = ray ? Math.sin(phi * 14 + theta) * 0.35 : Math.sin(theta * 5) * 0.12;
+
+  return new THREE.Vector3(
+    Math.sin(phi) * Math.cos(theta) * (r + jag),
+    Math.sin(phi) * Math.sin(theta) * (r + jag) * 0.85,
+    Math.cos(phi) * r * 0.75
+  ).multiplyScalar(1.55);
+}
+
+const SHAPES = [sampleStator, sampleMotorBody, sampleLightning, sampleTransformer, sampleSparkBurst];
 
 // Cluster X positions per section (zigzag like Dala: visual opposite text)
 const CLUSTER_X = [2.4, -2.2, -2.4, 2.3, 0.0];
