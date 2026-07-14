@@ -32,7 +32,7 @@
 
       <nav class="nav-desktop" aria-label="Main">
         <a href="#services">Services</a>
-        <a href="#telecom">Telecom</a>
+        <a href="#spark">Telecom</a>
         <a href="#about">About</a>
         <a href="#contact">Contact</a>
       </nav>
@@ -50,14 +50,14 @@
 
   <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile">
     <a href="#services">Services</a>
-    <a href="#telecom">Telecom</a>
+    <a href="#spark">Telecom</a>
     <a href="#about">About</a>
     <a href="#contact">Contact</a>
     <a href="#contact" class="btn">Request Quote</a>
   </nav>
 
   <main>
-    <!-- Landing — mirrors Dala hero exactly -->
+    <!-- 0 · Hero — text left, brain constellation right (Dala exact) -->
     <section class="section landing section--screen" id="top">
       <h1 class="landing__title title-display reveal-hero reveal-hero-1">
         <span>Power</span>
@@ -65,7 +65,7 @@
         <span>Rewind.</span>
       </h1>
       <div class="landing__body">
-        <div class="eyebrow reveal-hero reveal-hero-2">Fiji's electrical specialists. Trusted since day one.</div>
+        <div class="eyebrow reveal-hero reveal-hero-2">Stop waiting on parts. Start turning again.</div>
         <p class="body-lg reveal-hero reveal-hero-3">
           Lal's Motor Winders (Fiji) PTE Limited — motor and generator rewinding, electrical supplies, and telecommunications for industry across the Pacific.
         </p>
@@ -75,27 +75,27 @@
       </div>
     </section>
 
-    <!-- Introduction — right-aligned like Dala -->
+    <!-- 1 · Services — text right, motor morph left -->
     <section class="section section--tall introduction" id="services">
       <div class="introduction__inner reveal">
-        <h2 class="introduction__title title-section">Industrial power, restored with precision</h2>
+        <h2 class="introduction__title title-section">Make downtime disappear</h2>
         <p class="body-lg">
-          When machinery stops, Fiji calls Lal's. We rewind motors and generators, supply electrical equipment, and keep industrial operations running — from sugar mills to telecom towers.
+          When a motor fails, every hour costs money. We rewind AC and DC motors, overhaul generators, and get Fiji's factories, hotels, and utilities back online — fast.
         </p>
       </div>
     </section>
 
-    <!-- Center manifesto paragraphs -->
+    <!-- Center manifesto copy while morphing -->
     <section class="section section--tall">
       <div class="center-copy reveal">
-        <p>This is industrial Fiji today. Critical motors, pumps, and generators keeping factories, hotels, and utilities alive — until something fails.</p>
+        <p>This is industrial Fiji today. Critical motors, pumps, and generators keeping production alive — until something burns out.</p>
         <p><span class="highlight">Every hour of downtime costs money.</span> Finding the right rewind specialist shouldn't be a gamble.</p>
-        <p>Incomplete repairs and delayed turnarounds leave teams scrambling. Existing suppliers are slow, opaque, or overseas.</p>
+        <p>Incomplete repairs and delayed turnarounds leave teams scrambling. Overseas suppliers are slow. Local options are inconsistent.</p>
         <p>They fail to understand what Fiji's industries need when equipment goes down and production can't wait.</p>
       </div>
     </section>
 
-    <!-- Services — left aligned manifesto section -->
+    <!-- Services detail — left text while motor shape settles -->
     <section class="section section--tall section--end-md">
       <div class="manifesto-block reveal">
         <h2 class="title-section">What we wind. What we supply.</h2>
@@ -122,11 +122,10 @@
       </div>
     </section>
 
-    <!-- Telecom — right aligned like Dala manifesto -->
-    <section class="section section--tall section--start-md" id="telecom">
+    <!-- 2 · Spark / Telecom — text right, lightbulb on left -->
+    <section class="section section--tall section--end-md" id="spark">
       <div class="manifesto-block manifesto-block--wide reveal">
-        <p class="eyebrow">Telecommunications</p>
-        <h2 class="title-section">Connecting Fiji.<br>Authorized partner.</h2>
+        <h2 class="title-section">Spark lightbulb moments</h2>
         <p class="body-muted" style="margin-bottom:1.25rem">
           Beyond industrial electrical work, we partner with Fiji's leading mobile networks — supplying equipment, installation, and maintenance for Vodafone and Digicel infrastructure.
         </p>
@@ -140,12 +139,12 @@
       </div>
     </section>
 
-    <!-- About — left -->
-    <section class="section section--tall section--end-md" id="about">
+    <!-- 3 · About — text left, globe on right -->
+    <section class="section section--tall section--start-md" id="about">
       <div class="manifesto-block reveal">
         <h2 class="title-section">Build a more reliable Fiji</h2>
         <p class="body-muted" style="margin-bottom:1.25rem">
-          Our mission is to keep industry moving — reframing electrical repair from <span class="highlight">waiting weeks</span> to <span class="highlight">getting back online</span>.
+          Our mission is to keep industry moving — reframing electrical repair from <span class="highlight">waiting weeks</span> to <span class="t-yellow">getting back online</span>.
         </p>
         <p class="body-muted" style="margin-bottom:1.25rem">
           For over two decades, Lal's Motor Winders has been the go-to specialist when machinery stops. Our Suva workshop houses modern winding machines, precision testing equipment, and certified technicians.
@@ -156,8 +155,8 @@
       </div>
     </section>
 
-    <!-- Final CTA — full viewport like Dala -->
-    <section class="section final-cta">
+    <!-- 4 · Final CTA — cloud morph, centered -->
+    <section class="section final-cta" id="cta">
       <h2 class="title-xl reveal">Your motors deserve precision. Ask Lal's for it.</h2>
       <div class="reveal reveal-delay-2">
         <a href="#contact" class="btn">Request Quote</a>
@@ -245,7 +244,6 @@
 
   <script type="module" src="js/particles.js"></script>
   <script>
-    // Mobile nav
     const toggle = document.getElementById('menu-toggle');
     const mobileNav = document.getElementById('mobile-nav');
     toggle.addEventListener('click', () => {
@@ -259,7 +257,6 @@
       });
     });
 
-    // Scroll reveals
     const reveals = document.querySelectorAll('.reveal');
     if ('IntersectionObserver' in window) {
       const io = new IntersectionObserver((entries) => {
@@ -275,7 +272,6 @@
       reveals.forEach((el) => el.classList.add('is-visible'));
     }
 
-    // VH unit
     function setVh() {
       document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px');
     }
