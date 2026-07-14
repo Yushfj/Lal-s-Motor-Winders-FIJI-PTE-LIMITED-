@@ -165,9 +165,9 @@ function sampleSparkBurst(i, n) {
 }
 
 const SHAPES = [sampleStator, sampleMotorBody, sampleLightning, sampleTransformer, sampleSparkBurst];
-const CLUSTER_X = [2.5, -2.3, -2.5, 2.4, 0];
+const CLUSTER_X = [3.2, -3.0, -3.1, 3.1, 0];
 const CLUSTER_Y = [0.1, 0.05, 0.2, 0, 0.25];
-const CLUSTER_SCALE = [1.08, 1.0, 1.2, 1.05, 1.3];
+const CLUSTER_SCALE = [1.0, 0.95, 1.1, 1.0, 1.15];
 
 function triGeo(size = 0.026) {
   const g = new THREE.BufferGeometry();
@@ -214,7 +214,7 @@ async function init() {
     try {
       composer = new EffectComposer(renderer);
       composer.addPass(new RenderPass(scene, camera));
-      bloom = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.55, 0.4, 0.82);
+      bloom = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.38, 0.35, 0.88);
       composer.addPass(bloom);
     } catch (err) {
       console.warn('[constellation] composer failed', err);
@@ -238,11 +238,11 @@ async function init() {
     depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
   });
   const matA = new THREE.MeshBasicMaterial({
-    color: 0xffffff, wireframe: true, transparent: true, opacity: 0.28,
+    color: 0xffffff, wireframe: true, transparent: true, opacity: 0.14,
     depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
   });
   const matL = new THREE.MeshBasicMaterial({
-    color: 0xffffff, wireframe: true, transparent: true, opacity: 0.16,
+    color: 0xffffff, wireframe: true, transparent: true, opacity: 0.08,
     depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
   });
 
@@ -434,7 +434,7 @@ async function init() {
       camera.lookAt(cluster.position.x * 0.4, cluster.position.y * 0.3, 0);
       cluster.rotation.y = t * 0.045;
       cluster.rotation.x = Math.sin(t * 0.12) * 0.04;
-      if (bloom) bloom.strength = 0.45 + energize * 0.7 + Math.sin(t * 0.8) * 0.05;
+      if (bloom) bloom.strength = 0.32 + energize * 0.45 + Math.sin(t * 0.8) * 0.03;
     }
 
     const from = shapePos[morphFrom];

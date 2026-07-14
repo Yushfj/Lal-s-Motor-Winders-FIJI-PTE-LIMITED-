@@ -53,6 +53,72 @@ img { display: block; max-width: 100%; }
   pointer-events: none;
 }
 
+/* Keep all page content above the particle field */
+main,
+.header,
+.site-footer,
+.progress-rail,
+.shape-chip {
+  position: relative;
+  z-index: 2;
+}
+
+.header { z-index: 100; }
+
+/*
+  Soft black veil behind copy so additive particles can't wash out type.
+  Mimics Dala's text-over-constellation readability treatment.
+*/
+.text-shield {
+  position: relative;
+  isolation: isolate;
+  z-index: 2;
+}
+
+.text-shield::before {
+  content: '';
+  position: absolute;
+  inset: -20% -15%;
+  background:
+    radial-gradient(ellipse 80% 70% at 30% 40%, rgba(0, 0, 0, 0.92) 0%, rgba(0, 0, 0, 0.55) 45%, transparent 72%),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0.55) 55%, transparent 100%);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.text-shield--right::before {
+  background:
+    radial-gradient(ellipse 80% 70% at 70% 40%, rgba(0, 0, 0, 0.92) 0%, rgba(0, 0, 0, 0.55) 45%, transparent 72%),
+    linear-gradient(270deg, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0.55) 55%, transparent 100%);
+}
+
+.text-shield--center::before {
+  background:
+    radial-gradient(ellipse 90% 80% at 50% 50%, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.5) 50%, transparent 75%);
+}
+
+/* Crisp type over bright particles */
+.landing__title,
+.title-display,
+.title-section,
+.title-xl,
+.service-name {
+  text-shadow:
+    0 0 24px rgba(0, 0, 0, 0.95),
+    0 2px 16px rgba(0, 0, 0, 0.9),
+    0 0 2px rgba(0, 0, 0, 1);
+}
+
+.body-lg,
+.body-muted,
+.eyebrow,
+.contact-value,
+.center-copy p {
+  text-shadow:
+    0 0 18px rgba(0, 0, 0, 0.95),
+    0 1px 10px rgba(0, 0, 0, 0.85);
+}
+
 /* ——— Typography utilities (Dala scale) ——— */
 .t-yellow { color: #ffb829 !important; }
 .t-uppercase { text-transform: uppercase; }
@@ -169,6 +235,7 @@ img { display: block; max-width: 100%; }
   right: 0;
   z-index: 100;
   pointer-events: none;
+  background: linear-gradient(180deg, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.35) 60%, transparent 100%);
 }
 
 .header__inner {
@@ -278,7 +345,7 @@ img { display: block; max-width: 100%; }
 /* ——— Sections ——— */
 .section {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   justify-content: center;
