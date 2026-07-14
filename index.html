@@ -12,7 +12,26 @@
 </head>
 <body>
 
+  <div class="loader" id="loader" aria-live="polite">
+    <div class="loader__label">Energizing</div>
+    <div class="loader__row">
+      <div class="loader__title">Lal's Motor Winders</div>
+      <div class="loader__pct" id="loader-pct">0</div>
+    </div>
+    <div class="loader__bar"><div class="loader__bar-fill" id="loader-bar"></div></div>
+  </div>
+
   <canvas id="canvas" aria-hidden="true"></canvas>
+
+  <nav class="progress-rail" id="progress-rail" aria-label="Section progress">
+    <button class="progress-dot is-active" data-target="top" aria-label="Hero"></button>
+    <button class="progress-dot" data-target="services" aria-label="Services"></button>
+    <button class="progress-dot" data-target="spark" aria-label="Telecom"></button>
+    <button class="progress-dot" data-target="about" aria-label="About"></button>
+    <button class="progress-dot" data-target="cta" aria-label="Quote"></button>
+  </nav>
+
+  <div class="shape-chip" id="shape-chip" aria-hidden="true">Motor stator</div>
 
   <header class="header">
     <div class="header__inner">
@@ -60,12 +79,12 @@
     <!-- 0 · Hero — text left, brain constellation right (Dala exact) -->
     <section class="section landing section--screen" id="top">
       <h1 class="landing__title title-display reveal-hero reveal-hero-1">
-        <span>Power</span>
-        <span>precision.</span>
-        <span>Rewind.</span>
+        <span>Wind.</span>
+        <span>Power.</span>
+        <span>Endure.</span>
       </h1>
       <div class="landing__body">
-        <div class="eyebrow reveal-hero reveal-hero-2">Stop waiting on parts. Start turning again.</div>
+        <div class="eyebrow reveal-hero reveal-hero-2">Fiji's industrial heartbeat. Rewound to last.</div>
         <p class="body-lg reveal-hero reveal-hero-3">
           Lal's Motor Winders (Fiji) PTE Limited — motor and generator rewinding, electrical supplies, and telecommunications for industry across the Pacific.
         </p>
@@ -244,6 +263,36 @@
 
   <script type="module" src="js/particles.js"></script>
   <script>
+    /* Loader */
+    const loader = document.getElementById('loader');
+    const loaderPct = document.getElementById('loader-pct');
+    const loaderBar = document.getElementById('loader-bar');
+    let loadP = 0;
+    const loadTimer = setInterval(() => {
+      loadP = Math.min(100, loadP + (loadP < 70 ? 3 : 1.2));
+      loaderPct.textContent = Math.floor(loadP);
+      loaderBar.style.width = loadP + '%';
+      if (loadP >= 100) {
+        clearInterval(loadTimer);
+        finishLoader();
+      }
+    }, 28);
+
+    function finishLoader() {
+      loadP = 100;
+      loaderPct.textContent = '100';
+      loaderBar.style.width = '100%';
+      setTimeout(() => {
+        loader.classList.add('is-done');
+        document.body.classList.add('is-ready');
+      }, 280);
+    }
+
+    window.addEventListener('constellation-ready', () => {
+      loadP = Math.max(loadP, 92);
+    });
+
+    /* Mobile nav */
     const toggle = document.getElementById('menu-toggle');
     const mobileNav = document.getElementById('mobile-nav');
     toggle.addEventListener('click', () => {
@@ -257,6 +306,7 @@
       });
     });
 
+    /* Scroll reveals */
     const reveals = document.querySelectorAll('.reveal');
     if ('IntersectionObserver' in window) {
       const io = new IntersectionObserver((entries) => {
@@ -271,6 +321,55 @@
     } else {
       reveals.forEach((el) => el.classList.add('is-visible'));
     }
+
+    /* Progress rail */
+    const dots = [...document.querySelectorAll('.progress-dot')];
+    const targets = dots.map((d) => document.getElementById(d.dataset.target)).filter(Boolean);
+    dots.forEach((d) => {
+      d.addEventListener('click', () => {
+        const el = document.getElementById(d.dataset.target);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+
+    function updateDots() {
+      const mid = window.scrollY + window.innerHeight * 0.4;
+      let active = 0;
+      targets.forEach((el, i) => {
+        const top = el.offsetTop;
+        if (mid >= top) active = i;
+      });
+      dots.forEach((d, i) => d.classList.toggle('is-active', i === active));
+    }
+    window.addEventListener('scroll', updateDots, { passive: true });
+    updateDots();
+
+    /* Shape chip */
+    const chip = document.getElementById('shape-chip');
+    const SHAPE_NAMES = ['Motor stator', 'Generator', 'Lightning', 'Transformer', 'Spark burst'];
+    let chipTimer;
+    window.addEventListener('constellation-shape', (e) => {
+      const name = SHAPE_NAMES[e.detail.shape] || '';
+      chip.textContent = name;
+      chip.classList.add('is-on');
+      clearTimeout(chipTimer);
+      chipTimer = setTimeout(() => chip.classList.remove('is-on'), 1600);
+    });
+
+    /* Magnetic buttons */
+    document.querySelectorAll('.btn').forEach((btn) => {
+      btn.addEventListener('pointermove', (e) => {
+        const r = btn.getBoundingClientRect();
+        const x = e.clientX - r.left - r.width / 2;
+        const y = e.clientY - r.top - r.height / 2;
+        btn.classList.add('is-magnetic');
+        btn.style.transform = `translate(${x * 0.22}px, ${y * 0.28}px)`;
+      });
+      btn.addEventListener('pointerleave', () => {
+        btn.classList.remove('is-magnetic');
+        btn.style.transform = '';
+      });
+    });
 
     function setVh() {
       document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px');
