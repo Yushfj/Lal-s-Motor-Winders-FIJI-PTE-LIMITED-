@@ -66,8 +66,8 @@ main,
 .header { z-index: 100; }
 
 /*
-  Soft black veil behind copy so additive particles can't wash out type.
-  Mimics Dala's text-over-constellation readability treatment.
+  Opaque black veil behind copy so additive bloom can't wash out type.
+  Particles stay visible in the open visual column; words sit on solid void.
 */
 .text-shield {
   position: relative;
@@ -78,23 +78,33 @@ main,
 .text-shield::before {
   content: '';
   position: absolute;
-  inset: -20% -15%;
+  inset: -28% -18%;
   background:
-    radial-gradient(ellipse 80% 70% at 30% 40%, rgba(0, 0, 0, 0.92) 0%, rgba(0, 0, 0, 0.55) 45%, transparent 72%),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0.55) 55%, transparent 100%);
+    radial-gradient(ellipse 75% 65% at 28% 42%, rgba(0, 0, 0, 0.98) 0%, rgba(0, 0, 0, 0.82) 42%, rgba(0, 0, 0, 0.35) 68%, transparent 82%),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.97) 0%, rgba(0, 0, 0, 0.88) 48%, rgba(0, 0, 0, 0.4) 72%, transparent 100%);
   z-index: -1;
   pointer-events: none;
 }
 
 .text-shield--right::before {
   background:
-    radial-gradient(ellipse 80% 70% at 70% 40%, rgba(0, 0, 0, 0.92) 0%, rgba(0, 0, 0, 0.55) 45%, transparent 72%),
-    linear-gradient(270deg, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0.55) 55%, transparent 100%);
+    radial-gradient(ellipse 75% 65% at 72% 42%, rgba(0, 0, 0, 0.98) 0%, rgba(0, 0, 0, 0.82) 42%, rgba(0, 0, 0, 0.35) 68%, transparent 82%),
+    linear-gradient(270deg, rgba(0, 0, 0, 0.97) 0%, rgba(0, 0, 0, 0.88) 48%, rgba(0, 0, 0, 0.4) 72%, transparent 100%);
 }
 
 .text-shield--center::before {
   background:
-    radial-gradient(ellipse 90% 80% at 50% 50%, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.5) 50%, transparent 75%);
+    radial-gradient(ellipse 95% 85% at 50% 50%, rgba(0, 0, 0, 0.97) 0%, rgba(0, 0, 0, 0.78) 45%, rgba(0, 0, 0, 0.3) 70%, transparent 85%);
+}
+
+/* Header gradient so nav/logo aren't blinded by bloom */
+.header::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 -40px;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.92) 0%, rgba(0, 0, 0, 0.55) 55%, transparent 100%);
+  pointer-events: none;
+  z-index: -1;
 }
 
 /* Crisp type over bright particles */
@@ -102,21 +112,28 @@ main,
 .title-display,
 .title-section,
 .title-xl,
-.service-name {
+.service-name,
+.logo-wordmark {
   text-shadow:
-    0 0 24px rgba(0, 0, 0, 0.95),
-    0 2px 16px rgba(0, 0, 0, 0.9),
-    0 0 2px rgba(0, 0, 0, 1);
+    0 0 32px rgba(0, 0, 0, 1),
+    0 0 56px rgba(0, 0, 0, 0.95),
+    0 2px 18px rgba(0, 0, 0, 1),
+    0 0 3px rgba(0, 0, 0, 1);
 }
 
 .body-lg,
 .body-muted,
 .eyebrow,
 .contact-value,
-.center-copy p {
+.center-copy p,
+.nav-desktop a,
+.partner,
+.contact-label,
+.footer-copy {
   text-shadow:
-    0 0 18px rgba(0, 0, 0, 0.95),
-    0 1px 10px rgba(0, 0, 0, 0.85);
+    0 0 22px rgba(0, 0, 0, 1),
+    0 1px 12px rgba(0, 0, 0, 1),
+    0 0 3px rgba(0, 0, 0, 1);
 }
 
 /* ——— Typography utilities (Dala scale) ——— */
@@ -235,7 +252,8 @@ main,
   right: 0;
   z-index: 100;
   pointer-events: none;
-  background: linear-gradient(180deg, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.35) 60%, transparent 100%);
+  isolation: isolate;
+  background: linear-gradient(180deg, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.45) 55%, transparent 100%);
 }
 
 .header__inner {

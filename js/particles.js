@@ -165,9 +165,9 @@ function sampleSparkBurst(i, n) {
 }
 
 const SHAPES = [sampleStator, sampleMotorBody, sampleLightning, sampleTransformer, sampleSparkBurst];
-const CLUSTER_X = [3.2, -3.0, -3.1, 3.1, 0];
+const CLUSTER_X = [3.55, -3.4, -3.45, 3.5, 0];
 const CLUSTER_Y = [0.1, 0.05, 0.2, 0, 0.25];
-const CLUSTER_SCALE = [1.0, 0.95, 1.1, 1.0, 1.15];
+const CLUSTER_SCALE = [0.92, 0.88, 1.0, 0.9, 1.05];
 
 function triGeo(size = 0.026) {
   const g = new THREE.BufferGeometry();
@@ -202,7 +202,7 @@ async function init() {
   renderer.setClearColor(0x000000, 0);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.2;
+  renderer.toneMappingExposure = 0.95;
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
@@ -214,7 +214,7 @@ async function init() {
     try {
       composer = new EffectComposer(renderer);
       composer.addPass(new RenderPass(scene, camera));
-      bloom = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.38, 0.35, 0.88);
+      bloom = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.22, 0.28, 0.9);
       composer.addPass(bloom);
     } catch (err) {
       console.warn('[constellation] composer failed', err);
@@ -238,11 +238,11 @@ async function init() {
     depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
   });
   const matA = new THREE.MeshBasicMaterial({
-    color: 0xffffff, wireframe: true, transparent: true, opacity: 0.14,
+    color: 0xffffff, wireframe: true, transparent: true, opacity: 0.08,
     depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
   });
   const matL = new THREE.MeshBasicMaterial({
-    color: 0xffffff, wireframe: true, transparent: true, opacity: 0.08,
+    color: 0xffffff, wireframe: true, transparent: true, opacity: 0.045,
     depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
   });
 
@@ -434,7 +434,7 @@ async function init() {
       camera.lookAt(cluster.position.x * 0.4, cluster.position.y * 0.3, 0);
       cluster.rotation.y = t * 0.045;
       cluster.rotation.x = Math.sin(t * 0.12) * 0.04;
-      if (bloom) bloom.strength = 0.32 + energize * 0.45 + Math.sin(t * 0.8) * 0.03;
+      if (bloom) bloom.strength = 0.18 + energize * 0.28 + Math.sin(t * 0.8) * 0.02;
     }
 
     const from = shapePos[morphFrom];
